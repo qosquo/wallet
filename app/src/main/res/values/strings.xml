@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Wallet</string>
+
+    <string name="accounts">Accounts</string>
+    <string name="accounts_list">Accounts</string>
+    <string name="accounts_create">Add account</string>
+    <string name="accounts_edit">Edit account</string>
+
+    <string name="categories">Categories</string>
+    <string name="categories_list">Categories</string>
+</resources>
