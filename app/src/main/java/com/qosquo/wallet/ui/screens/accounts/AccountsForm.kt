@@ -29,6 +29,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +42,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.qosquo.wallet.Dependencies
 import com.qosquo.wallet.Event
 import com.qosquo.wallet.ui.Colors
 import com.qosquo.wallet.ui.Icons
@@ -48,10 +51,11 @@ import com.qosquo.wallet.viewmodel.states.AccountsState
 
 @Composable
 fun AccountsForm(
-    state: AccountsState,
+//    state: AccountsState,
     onEvent: (Event.AccountsEvent) -> Unit,
     onFinishCreating: () -> Unit
 ) {
+    val state by Dependencies.accountsViewModel.state.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxSize()
