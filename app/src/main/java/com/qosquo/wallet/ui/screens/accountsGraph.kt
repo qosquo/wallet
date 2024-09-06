@@ -14,18 +14,12 @@ fun NavGraphBuilder.accountsGraph(
     route: String,
     navController: NavController
 ) {
-    val screens = listOf(
-        Screen.Accounts.List,
-        Screen.Accounts.Create,
-        Screen.Accounts.Edit
-    )
-
     navigation(
-        startDestination = screens[0].route,
+        startDestination = Screen.Accounts.List.route,
         route = route
     ) {
         // accounts/list
-        composable(screens[0].route) {
+        composable(Screen.Accounts.List.route) {
             AccountsList(
                 onEvent = accountsViewModel::onEvent,
                 onActionButtonClicked = { isEditing ->
@@ -37,7 +31,7 @@ fun NavGraphBuilder.accountsGraph(
                 }
             )
         }
-        composable(screens[1].route) {
+        composable(Screen.Accounts.Create.route) {
             AccountsForm(
                 onEvent = accountsViewModel::onEvent,
                 onFinishCreating = {
@@ -46,7 +40,7 @@ fun NavGraphBuilder.accountsGraph(
             )
         }
 
-        composable(screens[2].route) {
+        composable(Screen.Accounts.Edit.route) {
             AccountsForm(
                 onEvent = accountsViewModel::onEvent,
                 onFinishCreating = {

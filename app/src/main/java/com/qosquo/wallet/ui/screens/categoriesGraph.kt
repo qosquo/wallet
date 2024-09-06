@@ -10,12 +10,8 @@ fun NavGraphBuilder.categoriesGraph(
     route: String,
     navController: NavController
 ) {
-    val screens = listOf(
-        Screen.Categories.List,
-    )
-
     navigation(
-        startDestination = screens[0].route,
+        startDestination = Screen.Categories.List.route,
         route = route
     ) {
         composable(Screen.Categories.List.route) {

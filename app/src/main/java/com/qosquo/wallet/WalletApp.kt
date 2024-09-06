@@ -19,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,6 +35,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.qosquo.wallet.Dependencies.accountsViewModel
+import com.qosquo.wallet.ui.screens.BottomNavItems
 import com.qosquo.wallet.ui.screens.Screen
 import com.qosquo.wallet.ui.screens.accounts.AccountsForm
 import com.qosquo.wallet.ui.screens.accounts.AccountsList
@@ -68,29 +70,23 @@ fun WalletAppBar(
 
 @Composable
 fun WalletNavigationBar(
-    items: List<Screen>,
     navController: NavController,
-    currentDestination: NavDestination?
 ) {
-//    val items = listOf(
-//        Screens.Accounts.List,
-//    )
+    val items = listOf(
+        BottomNavItems.AccountsItem,
+        BottomNavItems.CategoriesItem
+    )
     BottomNavigation(
-        backgroundColor = MaterialTheme.colorScheme.primary,
         modifier = Modifier.navigationBarsPadding()
     ) {
-//        val navBackStackEntry by navController.currentBackStackEntryAsState()
-//        val currentDestination = navBackStackEntry?.destination
-        items.forEach { screen ->
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+
+        items.forEach { item ->
             BottomNavigationItem(
-                icon = { Icon(
-                    ImageVector.vectorResource(id = screen.iconId),
-                    contentDescription = null
-                ) },
-                label = { Text(stringResource(screen.resourceId)) },
-                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                 onClick = {
-                    navController.navigate(screen.route) {
+                    navController.navigate(item.route) {
                         // Pop up to the start destination of the graph to
                         // avoid building up a large stack of destinations
                         // on the back stack as users select items
@@ -103,7 +99,14 @@ fun WalletNavigationBar(
                         // Restore state when reselecting a previously selected item
                         restoreState = true
                     }
-                }
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = stringResource(id = item.title),
+                    )
+                },
+                label = { Text(text = stringResource(id = item.title)) }
             )
         }
     }
@@ -113,51 +116,52 @@ fun WalletNavigationBar(
 fun WalletApp(
     navController: NavHostController = rememberNavController()
 ) {
-    val screens = listOf(
-        Screen.Accounts.Root,
-        Screen.Categories.Root
+    val routes = listOf(
+        Screen.Accounts.List,
+        Screen.Accounts.Create,
+        Screen.Accounts.Edit,
+
+        Screen.Categories.List
     )
+
     // Get current back stack entry
     val backStackEntry by navController.currentBackStackEntryAsState()
     // Get the name of the current screen
-    val currentScreen = screens.find {
+    val currentScreen = routes.find {
         it.route == backStackEntry?.destination?.route
     } ?: Screen.Accounts.List
+
+    val prevRoute: String? = navController.previousBackStackEntry?.destination?.route
+    val prevRouteSplit = prevRoute?.split('/')?.get(0)
 
     Scaffold(
         topBar = {
             WalletAppBar(
                 currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null,
+                canNavigateBack = navController.previousBackStackEntry != null &&
+                    navController.previousBackStackEntry?.destination?.route
+                        ?.split('/')?.get(0) == currentScreen.route.split('/')[0],
                 navigateUp = {
                     navController.navigateUp()
-
-                    /*if (accountsViewModel.canExitForm()) {
-                        navController.navigateUp()
-                    }*/
                 }
             )
         },
         bottomBar = {
-            WalletNavigationBar(
-                items = screens,
-                navController = navController,
-                currentDestination = backStackEntry?.destination
-            )
+            WalletNavigationBar(navController = navController)
         }
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = screens[0].route,
+            startDestination = Screen.AccountsNav.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             accountsGraph(
-                route = screens[0].route,
+                route = Screen.AccountsNav.route,
                 navController = navController
             )
 
             categoriesGraph(
-                route = screens[1].route,
+                route = Screen.CategoriesNav.route,
                 navController = navController
             )
         }
