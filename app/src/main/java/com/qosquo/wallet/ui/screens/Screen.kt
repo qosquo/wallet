@@ -3,6 +3,9 @@ package com.qosquo.wallet.ui.screens
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.qosquo.wallet.R
+import com.qosquo.wallet.ui.screens.Screen.Accounts.Create
+import com.qosquo.wallet.ui.screens.Screen.Accounts.Edit
+import com.qosquo.wallet.ui.screens.Screen.Accounts.List
 
 sealed class Screen (
     @DrawableRes val iconId: Int,
@@ -11,8 +14,8 @@ sealed class Screen (
 ) {
 
     sealed class Accounts(
-        override val route: String,
-        @StringRes override val resourceId: Int
+        override val route: String = "accounts",
+        @StringRes override val resourceId: Int = R.string.accounts
     ) : Screen(
         R.drawable.bank_fill,
         "accounts",
@@ -25,8 +28,8 @@ sealed class Screen (
     }
 
     sealed class Categories(
-        override val route: String,
-        @StringRes override val resourceId: Int
+        override val route: String = "categories",
+        @StringRes override val resourceId: Int = R.string.categories
     ) : Screen(
         R.drawable.chart_bar_fill,
         "categories",

@@ -38,6 +38,7 @@ import com.qosquo.wallet.ui.screens.Screen
 import com.qosquo.wallet.ui.screens.accounts.AccountsForm
 import com.qosquo.wallet.ui.screens.accounts.AccountsList
 import com.qosquo.wallet.ui.screens.accountsGraph
+import com.qosquo.wallet.ui.screens.categoriesGraph
 import com.qosquo.wallet.viewmodel.AccountsViewModel
 
 
@@ -112,7 +113,6 @@ fun WalletNavigationBar(
 fun WalletApp(
     navController: NavHostController = rememberNavController()
 ) {
-    val accountsViewModel = Dependencies.accountsViewModel
     val screens = listOf(
         Screen.Accounts.Root,
         Screen.Categories.Root
@@ -130,9 +130,11 @@ fun WalletApp(
                 currentScreen = currentScreen,
                 canNavigateBack = navController.previousBackStackEntry != null,
                 navigateUp = {
-                    if (accountsViewModel.canExitForm()) {
+                    navController.navigateUp()
+
+                    /*if (accountsViewModel.canExitForm()) {
                         navController.navigateUp()
-                    }
+                    }*/
                 }
             )
         },
@@ -151,6 +153,11 @@ fun WalletApp(
         ) {
             accountsGraph(
                 route = screens[0].route,
+                navController = navController
+            )
+
+            categoriesGraph(
+                route = screens[1].route,
                 navController = navController
             )
         }
