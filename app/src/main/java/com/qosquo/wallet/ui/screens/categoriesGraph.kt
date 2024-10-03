@@ -5,6 +5,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.qosquo.wallet.Dependencies
+import com.qosquo.wallet.ui.screens.categories.CategoriesList
 
 fun NavGraphBuilder.categoriesGraph(
     route: String,
@@ -15,7 +17,12 @@ fun NavGraphBuilder.categoriesGraph(
         route = route
     ) {
         composable(Screen.Categories.List.route) {
-            Text("hello")
+            CategoriesList(
+                onEvent = Dependencies.categoriesViewModel::onEvent,
+                onActionButtonClicked = {
+
+                }
+            )
         }
     }
 }

@@ -3,17 +3,21 @@ package com.qosquo.wallet.model.database
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Upsert
+import com.qosquo.wallet.model.Category
 import com.qosquo.wallet.model.database.entities.AccountsDbEntity
 import com.qosquo.wallet.model.database.entities.CategoriesDbEntity
 
 @Dao
 interface CategoriesDao {
 
-    @Insert(entity = CategoriesDbEntity::class)
-    fun insertNewCategoryData(category: CategoriesDbEntity)
+    @Upsert(entity = CategoriesDbEntity::class)
+    fun upsertNewCategoryData(category: CategoriesDbEntity)
 
-    @Query("SELECT * FROM categories")
-    fun getAllCategoriesData(): List<CategoriesDbEntity>
+    @Query("SELECT categories.id, categories.category_name AS name," +
+            "categories.type, categories.goal, categories.category_icon_id AS iconId," +
+            "categories.color_hex AS colorHex FROM categories")
+    fun getAllCategoriesData(): List<Category>
 
     @Query("DELETE FROM categories WHERE ID = :categoryId")
     fun deleteCategoryDataById(categoryId: Long)

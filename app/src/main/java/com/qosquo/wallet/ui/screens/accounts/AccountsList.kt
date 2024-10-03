@@ -45,14 +45,6 @@ fun AccountsList(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 onEvent(Event.AccountsEvent.ShowForm(null))
-//                onEvent(Event.AccountsEvent.EditAccount(Account(
-//                    id = 0,
-//                    name = "",
-//                    accountIconId = 0,
-//                    colorHex = "#000000",
-//                    count = true,
-//                    balance = 0F
-//                )))
                 onActionButtonClicked(false)
             }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "add")

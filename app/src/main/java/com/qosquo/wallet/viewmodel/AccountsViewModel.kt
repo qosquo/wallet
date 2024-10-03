@@ -45,6 +45,7 @@ class AccountsViewModel(
     fun onEvent(event: Event.AccountsEvent) {
         when (event) {
             Event.AccountsEvent.SaveAccount -> {
+                val id = _state.value.id
                 val name = _state.value.name
                 val initialBalance = _state.value.initialBalance
                 val mustBeCounted = _state.value.mustBeCounted
@@ -57,7 +58,7 @@ class AccountsViewModel(
                 }
 
                 val newAccount = AccountsDbEntity(
-                    id = 0,
+                    id = id,
                     balance = initialBalance,
                     accountName = name,
                     accountIconId = iconId,
@@ -105,6 +106,7 @@ class AccountsViewModel(
                 if (event.account != null) {
                     this.initialState = AccountsState(
                         accounts = dao.getAllAccountsData(),
+                        id = event.account.id,
                         name = event.account.name,
                         initialBalance = event.account.balance,
                         iconId = event.account.accountIconId,
@@ -118,9 +120,6 @@ class AccountsViewModel(
                 }
 
                 _state.value = this.initialState
-            }
-            Event.AccountsEvent.CloseForm -> {
-
             }
         }
     }

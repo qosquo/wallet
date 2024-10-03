@@ -169,7 +169,12 @@ fun AccountsForm(
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
-            Text(text = "Create")
+            val text = if (state.id == 0L) {
+                "Create"
+            } else {
+                "Save"
+            }
+            Text(text = text)
         }
     }
 }
