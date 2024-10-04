@@ -2,6 +2,7 @@ package com.qosquo.wallet.ui.screens
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.qosquo.wallet.R
 import com.qosquo.wallet.ui.screens.Screen.Accounts.Create
 import com.qosquo.wallet.ui.screens.Screen.Accounts.Edit
@@ -36,19 +37,9 @@ sealed class Screen (
     data object CategoriesNav : Screen("CATEGORIES_NAV_GRAPH", R.string.categories)
 }
 
-sealed class BottomNavItems(
-    @StringRes val title: Int,
-    val route: String,
-    @DrawableRes val icon: Int
-) {
-    data object AccountsItem: BottomNavItems(
-        title = R.string.accounts,
-        route = Screen.AccountsNav.route,
-        icon = R.drawable.bank_fill
-    )
-    data object CategoriesItem: BottomNavItems(
-        title = R.string.categories,
-        route = Screen.CategoriesNav.route,
-        icon = R.drawable.chart_bar_fill
-    )
-}
+data class BottomNavigationItem(
+    val title: String,
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector,
+    val route: String
+)

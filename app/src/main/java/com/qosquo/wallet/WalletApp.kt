@@ -42,7 +42,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.qosquo.wallet.Dependencies.accountsViewModel
-import com.qosquo.wallet.ui.screens.BottomNavItems
+import com.qosquo.wallet.ui.screens.BottomNavigationItem
 import com.qosquo.wallet.ui.screens.Screen
 import com.qosquo.wallet.ui.screens.accounts.AccountsForm
 import com.qosquo.wallet.ui.screens.accounts.AccountsList
@@ -74,57 +74,6 @@ fun WalletAppBar(
         }
     )
 }
-
-@Composable
-fun WalletNavigationBar(
-    navController: NavController,
-) {
-    val items = listOf(
-        BottomNavItems.AccountsItem,
-        BottomNavItems.CategoriesItem
-    )
-    BottomNavigation(
-        modifier = Modifier.navigationBarsPadding()
-    ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
-
-        items.forEach { item ->
-            BottomNavigationItem(
-                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                onClick = {
-                    navController.navigate(item.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
-                    }
-                },
-                icon = {
-                    Icon(
-                        painter = painterResource(id = item.icon),
-                        contentDescription = stringResource(id = item.title),
-                    )
-                },
-                label = { Text(text = stringResource(id = item.title)) }
-            )
-        }
-    }
-}
-
-data class BottomNavigationItem(
-    val title: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
-    val route: String
-)
 
 @Composable
 fun WalletApp(
