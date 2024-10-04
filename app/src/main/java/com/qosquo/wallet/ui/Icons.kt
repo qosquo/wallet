@@ -5,7 +5,7 @@ import com.qosquo.wallet.R
 
 sealed interface Icons {
     enum class Accounts(@DrawableRes val id: Int): Icons {
-        BANK(id = R.drawable.bank),
+        BANK(id = R.drawable.bank_line),
         BANK_CARD(R.drawable.bank_card),
         CASH(R.drawable.cash),
         CURRENCY_BITCOIN(R.drawable.currency_bitcoin),
