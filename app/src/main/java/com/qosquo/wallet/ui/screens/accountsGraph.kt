@@ -1,5 +1,6 @@
 package com.qosquo.wallet.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -9,17 +10,17 @@ import com.qosquo.wallet.Dependencies.accountsViewModel
 import com.qosquo.wallet.ui.screens.accounts.AccountsForm
 import com.qosquo.wallet.ui.screens.accounts.AccountsList
 import com.qosquo.wallet.viewmodel.AccountsViewModel
+import kotlin.reflect.KClass
 
+@SuppressLint("RestrictedApi")
 fun NavGraphBuilder.accountsGraph(
-    route: String,
     navController: NavController
 ) {
-    navigation(
-        startDestination = Screen.Accounts.List.route,
-        route = route
+    navigation<Routes.Accounts> (
+        startDestination = Screens.Accounts.List,
     ) {
         // accounts/list
-        composable(Screen.Accounts.List.route) {
+        composable<Screens.Accounts.List> {
             AccountsList(
                 onEvent = accountsViewModel::onEvent,
                 onActionButtonClicked = { isEditing ->
@@ -31,7 +32,7 @@ fun NavGraphBuilder.accountsGraph(
                 }
             )
         }
-        composable(Screen.Accounts.Create.route) {
+        composable<Screens.Accounts.Form> {
             AccountsForm(
                 onEvent = accountsViewModel::onEvent,
                 onFinishCreating = {
@@ -40,13 +41,13 @@ fun NavGraphBuilder.accountsGraph(
             )
         }
 
-        composable(Screen.Accounts.Edit.route) {
-            AccountsForm(
-                onEvent = accountsViewModel::onEvent,
-                onFinishCreating = {
-                    navController.navigateUp()
-                }
-            )
-        }
+//        composable(Screen.Accounts.Edit.route) {
+//            AccountsForm(
+//                onEvent = accountsViewModel::onEvent,
+//                onFinishCreating = {
+//                    navController.navigateUp()
+//                }
+//            )
+//        }
     }
 }

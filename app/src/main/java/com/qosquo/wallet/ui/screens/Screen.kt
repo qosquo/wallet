@@ -1,12 +1,31 @@
 package com.qosquo.wallet.ui.screens
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.qosquo.wallet.R
-import com.qosquo.wallet.ui.screens.Screen.Accounts.Create
-import com.qosquo.wallet.ui.screens.Screen.Accounts.Edit
-import com.qosquo.wallet.ui.screens.Screen.Accounts.List
+import kotlinx.serialization.Serializable
+
+sealed class Screens {
+    @Serializable
+    sealed class Accounts(val title: String) {
+        @Serializable
+        data object List : Accounts("Accounts")
+        @Serializable
+        data object Form : Accounts("Edit account")
+    }
+    @Serializable
+    sealed class Categories(val title: String) {
+        @Serializable
+        data object List : Categories("Categories")
+    }
+}
+
+sealed class Routes {
+    @Serializable
+    object Accounts
+    @Serializable
+    object Categories
+}
 
 sealed class Screen (
     open val route: String,
@@ -37,9 +56,9 @@ sealed class Screen (
     data object CategoriesNav : Screen("CATEGORIES_NAV_GRAPH", R.string.categories)
 }
 
-data class BottomNavigationItem(
+data class TopLevelRoute<T : Any>(
     val title: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
-    val route: String
+    val route: T
 )
