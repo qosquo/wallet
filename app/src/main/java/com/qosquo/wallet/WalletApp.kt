@@ -29,6 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.qosquo.wallet.Dependencies.accountsViewModel
 import com.qosquo.wallet.ui.screens.TopLevelRoute
 import com.qosquo.wallet.ui.screens.Routes
@@ -64,7 +65,6 @@ fun WalletApp(
 
     // Get current back stack entry
     val backStackEntry by navController.currentBackStackEntryAsState()
-    print(backStackEntry?.destination?.route)
     var selectedNavItemIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
@@ -154,26 +154,22 @@ fun WalletApp(
             navigation<Routes.Accounts> (
                 startDestination = Screens.Accounts.List,
             ) {
-                // accounts/list
                 composable<Screens.Accounts.List> {
                     AccountsList(
-                        onEvent = accountsViewModel::onEvent,
-                        onActionButtonClicked = { isEditing ->
+                        onNavigate = { id ->
                             navController.navigate(Screens.Accounts.Form(
-                                null
+                                accountId = id
                             ))
-//                            if (isEditing) {
-//                                navController.navigate(Screen.Accounts.Edit.route)
-//                            } else {
-//                                navController.navigate(Screen.Accounts.Create.route)
-//                            }
                         }
                     )
                 }
+
                 composable<Screens.Accounts.Form> {
+                    val id: Long? = it.toRoute<Screens.Accounts.Form>().accountId
                     AccountsForm(
+                        accountId = id,
                         onEvent = accountsViewModel::onEvent,
-                        onFinishCreating = {
+                        onNavigate = {
                             navController.navigateUp()
                         }
                     )
@@ -185,8 +181,7 @@ fun WalletApp(
             ) {
                 composable<Screens.Categories.List> {
                     CategoriesList(
-                        onEvent = Dependencies.categoriesViewModel::onEvent,
-                        onActionButtonClicked = {
+                        onNavigate = { id ->
 
                         }
                     )

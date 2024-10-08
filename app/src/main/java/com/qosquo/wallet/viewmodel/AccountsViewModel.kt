@@ -2,7 +2,6 @@ package com.qosquo.wallet.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.qosquo.wallet.Event
-import com.qosquo.wallet.model.Account
 import com.qosquo.wallet.model.database.AccountsDao
 import com.qosquo.wallet.model.database.entities.AccountsDbEntity
 import com.qosquo.wallet.viewmodel.states.AccountsState
@@ -102,16 +101,17 @@ class AccountsViewModel(
                 _state.update { it.copy(colorHex = event.newHex) }
             }
 
-            is Event.AccountsEvent.ShowForm -> {
-                if (event.account != null) {
+            is Event.AccountsEvent.SetAccountById -> {
+                if (event.accountId != null) {
+                    val account = dao.getAccountFromId(event.accountId)
                     this.initialState = AccountsState(
                         accounts = dao.getAllAccountsData(),
-                        id = event.account.id,
-                        name = event.account.name,
-                        initialBalance = event.account.balance,
-                        iconId = event.account.accountIconId,
-                        colorHex = event.account.colorHex,
-                        mustBeCounted = event.account.count,
+                        id = account.id,
+                        name = account.name,
+                        initialBalance = account.balance,
+                        iconId = account.accountIconId,
+                        colorHex = account.colorHex,
+                        mustBeCounted = account.count,
                     )
                 } else {
                     this.initialState = AccountsState(

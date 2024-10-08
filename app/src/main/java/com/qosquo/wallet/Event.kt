@@ -1,6 +1,5 @@
 package com.qosquo.wallet
 
-import com.qosquo.wallet.model.Account
 import com.qosquo.wallet.model.Category
 import com.qosquo.wallet.model.CategoryTypes
 
@@ -9,7 +8,7 @@ sealed interface Event {
     sealed class AccountsEvent: Event {
         data object SaveAccount: AccountsEvent()
 
-        data class ShowForm(val account: Account?) : AccountsEvent()
+        data class SetAccountById(val accountId: Long?) : AccountsEvent()
         data class SetName(val newName: String): AccountsEvent()
         data class SetInitialBalance(val newBalance: Float): AccountsEvent()
         data class SetMustBeCounted(val newValue: Boolean): AccountsEvent()

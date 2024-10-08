@@ -26,15 +26,13 @@ import com.qosquo.wallet.ui.screens.Screens
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CategoriesList(
-    onEvent: (Event.CategoriesEvent) -> Unit,
-    onActionButtonClicked: (isEditing: Boolean) -> Unit
+    onNavigate: (id: Long?) -> Unit
 ) {
     val state by Dependencies.categoriesViewModel.state.collectAsStateWithLifecycle()
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                onEvent(Event.CategoriesEvent.ShowForm(null))
-                onActionButtonClicked(false)
+                onNavigate(null)
             }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "add")
             }

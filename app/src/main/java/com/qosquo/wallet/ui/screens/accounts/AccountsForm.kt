@@ -19,22 +19,17 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -50,29 +45,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.qosquo.wallet.Dependencies
 import com.qosquo.wallet.Event
 import com.qosquo.wallet.ui.Colors
 import com.qosquo.wallet.ui.Icons
-import com.qosquo.wallet.ui.screens.Screens
-import com.qosquo.wallet.viewmodel.states.AccountsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountsForm(
+    accountId: Long?,
     onEvent: (Event.AccountsEvent) -> Unit,
-    onFinishCreating: () -> Unit
+    onNavigate: () -> Unit
 ) {
     val state by Dependencies.accountsViewModel.state.collectAsStateWithLifecycle()
+    onEvent(Event.AccountsEvent.SetAccountById(accountId))
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 onEvent(Event.AccountsEvent.SaveAccount)
-                onFinishCreating()
+                onNavigate()
             }) {
-                Icon(imageVector = androidx.compose.material.icons.Icons.Default.Done, contentDescription = "add")
+                Icon(
+                    imageVector = androidx.compose.material.icons.Icons.Default.Done,
+                    contentDescription = "add"
+                )
             }
         }
     ) { _ ->

@@ -42,16 +42,13 @@ import com.qosquo.wallet.viewmodel.states.AccountsState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountsList(
-//    state: AccountsState,
-    onEvent: (Event.AccountsEvent) -> Unit,
-    onActionButtonClicked: (isEditing: Boolean) -> Unit
+    onNavigate: (id: Long?) -> Unit
 ) {
     val state by Dependencies.accountsViewModel.state.collectAsStateWithLifecycle()
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                onEvent(Event.AccountsEvent.ShowForm(null))
-                onActionButtonClicked(false)
+                onNavigate(null)
             }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "add")
             }
@@ -66,8 +63,7 @@ fun AccountsList(
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .clickable {
-                            onEvent(Event.AccountsEvent.ShowForm(account))
-                            onActionButtonClicked(true)
+                            onNavigate(account.id)
                         }
                 ) {
                     Row(
