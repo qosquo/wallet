@@ -5,6 +5,7 @@ import com.qosquo.wallet.Event
 import com.qosquo.wallet.model.Currencies
 import com.qosquo.wallet.model.database.AccountsDao
 import com.qosquo.wallet.model.database.entities.AccountsDbEntity
+import com.qosquo.wallet.ui.Icons
 import com.qosquo.wallet.viewmodel.states.AccountsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,6 +49,7 @@ class AccountsViewModel(
                 val id = _state.value.id
                 val name = _state.value.name
                 val initialBalance = _state.value.initialBalance.toFloatOrNull()
+                val currency = _state.value.currency
                 val mustBeCounted = _state.value.mustBeCounted
                 val iconId = _state.value.iconId
                 val colorHex = _state.value.colorHex
@@ -61,7 +63,7 @@ class AccountsViewModel(
                 val newAccount = AccountsDbEntity(
                     id = id,
                     balance = initialBalance / 100,
-                    currency = Currencies.RUBEL.ordinal,
+                    currency = currency,
                     accountName = name,
                     accountIconId = iconId,
                     colorHex = colorHex,
@@ -83,6 +85,7 @@ class AccountsViewModel(
                         iconId = 0,
                         colorHex = "#000000",
                         initialBalance = "",
+                        currency = Currencies.RUBEL.ordinal,
                         mustBeCounted = true
                     )
                 }
@@ -102,6 +105,10 @@ class AccountsViewModel(
             }
             is Event.AccountsEvent.SetColorHex -> {
                 _state.update { it.copy(colorHex = event.newHex) }
+            }
+
+            is Event.AccountsEvent.SetCurrency -> {
+                _state.update { it.copy(currency = event.newCurrency) }
             }
 
             is Event.AccountsEvent.SetAccountById -> {

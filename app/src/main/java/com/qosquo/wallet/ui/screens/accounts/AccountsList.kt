@@ -36,6 +36,7 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.Dependencies
 import com.qosquo.wallet.Event
+import com.qosquo.wallet.model.Currencies
 import com.qosquo.wallet.ui.screens.Screens
 import com.qosquo.wallet.viewmodel.states.AccountsState
 
@@ -93,7 +94,13 @@ fun AccountsList(
                                 .weight(1f)
                                 .padding(horizontal = 8.dp)
                         )
-                        Text(text = "${account.balance.toInt()} ₽")
+                        val currency = Currencies.entries[account.currency]
+                        val balanceText = if (currency.isLeftSide) {
+                            "${currency.symbol}${account.balance.toInt()}"
+                        } else {
+                            "${account.balance.toInt()}${currency.symbol}"
+                        }
+                        Text(text = balanceText)
                     }
                 }
             }

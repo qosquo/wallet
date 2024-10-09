@@ -1,58 +1,60 @@
 package com.qosquo.wallet.ui.screens.accounts
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.CurrencyAmountInputVisualTransformation
 import com.qosquo.wallet.Dependencies
 import com.qosquo.wallet.Event
+import com.qosquo.wallet.model.Currencies
 import com.qosquo.wallet.ui.Colors
 import com.qosquo.wallet.ui.Icons
 
@@ -65,6 +67,11 @@ fun AccountsForm(
 ) {
     val state by Dependencies.accountsViewModel.state.collectAsStateWithLifecycle()
     onEvent(Event.AccountsEvent.SetAccountById(accountId))
+
+    val openCurrenciesDialog = remember {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -78,6 +85,21 @@ fun AccountsForm(
             }
         }
     ) { _ ->
+        when {
+            openCurrenciesDialog.value -> {
+                CurrenciesDialog(
+                    onDismissRequest = {
+                        openCurrenciesDialog.value = false
+                    },
+                    onConfirmation = { value ->
+                        onEvent(Event.AccountsEvent.SetCurrency(value))
+                        openCurrenciesDialog.value = false
+                    },
+                    defaultValue = state.currency
+                )
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -114,10 +136,12 @@ fun AccountsForm(
                     keyboardType = KeyboardType.NumberPassword
                 ),
                 leadingIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        openCurrenciesDialog.value = true
+                    }) {
                         Icon(
                             imageVector = ImageVector.vectorResource(
-                                id = Icons.Currencies.RUBEL.id
+                                id = Currencies.entries[state.currency].id
                             ),
                             contentDescription = "Currency icon"
                         )
@@ -191,6 +215,87 @@ fun AccountsForm(
                         onEvent(Event.AccountsEvent.SetMustBeCounted(it))
                     }
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun CurrenciesDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmation: (newValue: Int) -> Unit,
+    defaultValue: Int
+) {
+    val selectedValue = remember {
+        mutableIntStateOf(defaultValue)
+    }
+
+    Dialog(onDismissRequest = onDismissRequest) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Select account currency",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    val currencies = Currencies.entries
+                    items(currencies) { currency ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .selectable(
+                                    selected = currency.ordinal == selectedValue.intValue,
+                                    onClick = {
+                                        selectedValue.intValue = currency.ordinal
+                                    }
+                                ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = currency.ordinal == selectedValue.intValue,
+                                onClick = {
+                                    selectedValue.intValue = currency.ordinal
+                                }
+                            )
+                            Text(text = currency.name)
+                        }
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextButton(
+                        onClick = onDismissRequest,
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Text("Dismiss")
+                    }
+                    TextButton(
+                        onClick = {
+                            onConfirmation(selectedValue.intValue)
+                        },
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Text("Confirm")
+                    }
+                }
             }
         }
     }

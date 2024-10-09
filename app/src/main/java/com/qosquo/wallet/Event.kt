@@ -14,6 +14,7 @@ sealed interface Event {
         data class SetMustBeCounted(val newValue: Boolean): AccountsEvent()
         data class SetIconId(val newId: Int) : AccountsEvent()
         data class SetColorHex(val newHex: String): AccountsEvent()
+        data class SetCurrency(val newCurrency: Int) : AccountsEvent()
     }
 
     sealed class CategoriesEvent: Event {
