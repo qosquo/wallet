@@ -11,7 +11,7 @@ import com.qosquo.wallet.model.database.entities.CategoriesDbEntity
 import com.qosquo.wallet.model.database.entities.TransactionsDbEntity
 
 @Database(
-    version = 7,
+    version = 8,
     entities = [
         AccountsDbEntity::class,
         CategoriesDbEntity::class,

@@ -2,6 +2,7 @@ package com.qosquo.wallet.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.qosquo.wallet.Event
+import com.qosquo.wallet.model.Currencies
 import com.qosquo.wallet.model.database.AccountsDao
 import com.qosquo.wallet.model.database.entities.AccountsDbEntity
 import com.qosquo.wallet.viewmodel.states.AccountsState
@@ -60,6 +61,7 @@ class AccountsViewModel(
                 val newAccount = AccountsDbEntity(
                     id = id,
                     balance = initialBalance / 100,
+                    currency = Currencies.RUBEL.ordinal,
                     accountName = name,
                     accountIconId = iconId,
                     colorHex = colorHex,
@@ -110,6 +112,7 @@ class AccountsViewModel(
                         id = account.id,
                         name = account.name,
                         initialBalance = (account.balance * 100).toInt().toString(),
+                        currency = account.currency,
                         iconId = account.accountIconId,
                         colorHex = account.colorHex,
                         mustBeCounted = account.count,

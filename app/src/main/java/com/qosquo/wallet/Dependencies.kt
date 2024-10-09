@@ -39,12 +39,22 @@ object Dependencies {
         }
     }
 
+    private val MIGRATION_7_8 = object : Migration(7,8) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE accounts ADD COLUMN currency INTEGER NOT NULL DEFAULT 0")
+        }
+    }
+
     private val _appDatabase: AppDatabase by lazy {
         Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
             "database_test.db"
-        ).addMigrations(MIGRATION_6_7).allowMainThreadQueries().build()
+        )
+            .addMigrations(MIGRATION_6_7)
+            .addMigrations(MIGRATION_7_8)
+            .allowMainThreadQueries()
+            .build()
     }
 
     val accountsViewModel by lazy {

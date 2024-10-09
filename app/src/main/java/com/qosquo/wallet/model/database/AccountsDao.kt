@@ -12,12 +12,14 @@ interface AccountsDao {
     @Upsert(entity = AccountsDbEntity::class)
     fun upsertNewAccountData(account: AccountsDbEntity)
 
-    @Query("SELECT accounts.id, accounts.balance, accounts.account_name AS name, " +
+    @Query("SELECT accounts.id, accounts.balance, accounts.currency, " +
+            "accounts.account_name AS name, " +
             "accounts.account_icon_id AS accountIconId, " +
             "accounts.color_hex AS colorHex, accounts.count FROM accounts")
     fun getAllAccountsData(): List<Account>
 
-    @Query("SELECT accounts.id, accounts.balance, accounts.account_name AS name, " +
+    @Query("SELECT accounts.id, accounts.balance, accounts.currency, " +
+            "accounts.account_name AS name, " +
             "accounts.account_icon_id AS accountIconId, " +
             "accounts.color_hex AS colorHex, accounts.count FROM accounts " +
             "WHERE ID = :accountId LIMIT 1")

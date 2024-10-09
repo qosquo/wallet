@@ -14,6 +14,7 @@ import androidx.room.PrimaryKey
 data class AccountsDbEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val balance: Float,
+    val currency: Int,
     @ColumnInfo(name = "account_name") val accountName: String,
     @ColumnInfo(name = "account_icon_id") @DrawableRes val accountIconId: Int,
     @ColumnInfo(name = "color_hex") val colorHex: String,
