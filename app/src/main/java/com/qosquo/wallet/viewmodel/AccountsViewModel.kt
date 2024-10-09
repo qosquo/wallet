@@ -46,19 +46,20 @@ class AccountsViewModel(
             Event.AccountsEvent.SaveAccount -> {
                 val id = _state.value.id
                 val name = _state.value.name
-                val initialBalance = _state.value.initialBalance
+                val initialBalance = _state.value.initialBalance.toFloatOrNull()
                 val mustBeCounted = _state.value.mustBeCounted
                 val iconId = _state.value.iconId
                 val colorHex = _state.value.colorHex
 
                 if (name.isBlank() || iconId == 0 ||
-                    colorHex.isBlank() || colorHex == "#000000") {
+                    colorHex.isBlank() || colorHex == "#000000" ||
+                    initialBalance == null) {
                     return
                 }
 
                 val newAccount = AccountsDbEntity(
                     id = id,
-                    balance = initialBalance,
+                    balance = initialBalance / 100,
                     accountName = name,
                     accountIconId = iconId,
                     colorHex = colorHex,
@@ -79,7 +80,7 @@ class AccountsViewModel(
                         name = "",
                         iconId = 0,
                         colorHex = "#000000",
-                        initialBalance = 0f,
+                        initialBalance = "",
                         mustBeCounted = true
                     )
                 }
@@ -108,7 +109,7 @@ class AccountsViewModel(
                         accounts = dao.getAllAccountsData(),
                         id = account.id,
                         name = account.name,
-                        initialBalance = account.balance,
+                        initialBalance = (account.balance * 100).toInt().toString(),
                         iconId = account.accountIconId,
                         colorHex = account.colorHex,
                         mustBeCounted = account.count,

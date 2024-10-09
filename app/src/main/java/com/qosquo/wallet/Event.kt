@@ -10,7 +10,7 @@ sealed interface Event {
 
         data class SetAccountById(val accountId: Long?) : AccountsEvent()
         data class SetName(val newName: String): AccountsEvent()
-        data class SetInitialBalance(val newBalance: Float): AccountsEvent()
+        data class SetInitialBalance(val newBalance: String): AccountsEvent()
         data class SetMustBeCounted(val newValue: Boolean): AccountsEvent()
         data class SetIconId(val newId: Int) : AccountsEvent()
         data class SetColorHex(val newHex: String): AccountsEvent()

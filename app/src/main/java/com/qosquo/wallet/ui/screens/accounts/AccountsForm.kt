@@ -25,13 +25,18 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.qosquo.wallet.CurrencyAmountInputVisualTransformation
 import com.qosquo.wallet.Dependencies
 import com.qosquo.wallet.Event
 import com.qosquo.wallet.ui.Colors
@@ -77,35 +83,11 @@ fun AccountsForm(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(fraction = 0.5f)
-                    .align(Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TextField(
-                    value = state.initialBalance.toString(),
-                    textStyle = TextStyle(
-                        textAlign = TextAlign.Center,
-                        fontSize = 22.sp
-                    ),
-                    onValueChange = {
-                        val value = it.toFloatOrNull()
-                        if (value != null) {
-                            onEvent(Event.AccountsEvent.SetInitialBalance(it.toFloat()))
-                        }
-                    },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number
-                    ),
-                    modifier = Modifier.weight(.5f)
-                )
-                Spacer(modifier = Modifier.padding(4.dp))
-                Text(text = "RUB", fontSize = 24.sp)
-            }
-            Spacer(modifier = Modifier.padding(vertical = 4.dp))
-            Text(text = "Account name")
-            TextField(
+            Text(
+                text = "Account name",
+                style = MaterialTheme.typography.titleMedium
+            )
+            OutlinedTextField(
                 value = state.name,
                 onValueChange = {
                     onEvent(Event.AccountsEvent.SetName(it))
@@ -113,49 +95,81 @@ fun AccountsForm(
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.padding(vertical = 4.dp))
-            Text(text = "Icons")
-            val size = 64.dp
+            Text(
+                text = "Initial balance",
+                style = MaterialTheme.typography.titleMedium
+            )
+            OutlinedTextField(
+                value = state.initialBalance,
+                onValueChange = {
+                    val value = if (it.startsWith("0")) {
+                        ""
+                    } else {
+                        it
+                    }
+                    onEvent(Event.AccountsEvent.SetInitialBalance(value))
+                },
+                visualTransformation = CurrencyAmountInputVisualTransformation(),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.NumberPassword
+                ),
+                leadingIcon = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(
+                                id = Icons.Currencies.RUBEL.id
+                            ),
+                            contentDescription = "Currency icon"
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.padding(vertical = 4.dp))
+            Text(
+                text = "Icons",
+                style = MaterialTheme.typography.titleMedium,
+            )
             LazyVerticalGrid(
-                columns = GridCells.Adaptive(size),
+                columns = GridCells.Adaptive(64.dp),
             ) {
                 val icons = Icons.Accounts.entries
                 items(icons) { icon ->
-                    SelectableCard(
-                        isSelected = state.iconId == icon.id,
-                        modifier = Modifier
-                            .size(size)
-                            .clickable {
-                                onEvent(Event.AccountsEvent.SetIconId(icon.id))
-                            },
+                    IconButton(
+                        onClick = {
+                            onEvent(Event.AccountsEvent.SetIconId(icon.id))
+                        },
                     ) {
+                        val isSelected = state.iconId == icon.id
                         Icon(
-                            imageVector = ImageVector.vectorResource(
-                                id = icon.id
-                            ),
+                            imageVector = ImageVector.vectorResource(id = icon.id),
                             contentDescription = "Account icon",
-                            tint = Color.Black,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(4.dp)
-                                .clip(CircleShape)
-                                .background(Color("#cccccc".toColorInt()))
+                            tint = if (isSelected) {
+                                Color(state.colorHex.toColorInt())
+                            } else {
+                                Color.Black
+                            },
+                            modifier = Modifier.size(36.dp)
                         )
                     }
                 }
             }
             Spacer(modifier = Modifier.padding(vertical = 4.dp))
-            Text(text = "Colors")
+            Text(
+                text = "Colors",
+                style = MaterialTheme.typography.titleMedium
+            )
             LazyRow(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 val colors = Colors.entries
                 items(colors) { color ->
                     SelectableColor(
+                        onClick = {
+                            onEvent(Event.AccountsEvent.SetColorHex(color.hex))
+                        },
                         modifier = Modifier
-                            .size(48.dp)
-                            .clickable {
-                                onEvent(Event.AccountsEvent.SetColorHex(color.hex))
-                            },
+                            .size(48.dp),
                         isSelected = color.hex == state.colorHex,
                         colorHex = color.hex
                     )
@@ -168,7 +182,8 @@ fun AccountsForm(
             ) {
                 Text(
                     text = "Must be counted in overall balance",
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Switch(
                     checked = state.mustBeCounted,
@@ -182,45 +197,28 @@ fun AccountsForm(
 }
 
 @Composable
-private fun SelectableCard(
-    isSelected: Boolean = false,
-    modifier: Modifier,
-    content: @Composable() (ColumnScope.() -> Unit)
-) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.background
-            }
-        ),
-        modifier = modifier
-            .wrapContentSize(align = Alignment.Center),
-        content = content
-    )
-}
-
-@Composable
 private fun SelectableColor(
+    onClick: () -> Unit,
     isSelected: Boolean = false,
     colorHex: String = "#000000",
     modifier: Modifier,
 ) {
-    Box(modifier = modifier
-        .wrapContentSize(align = Alignment.Center)
-        .padding(4.dp)
-        .clip(CircleShape)
-        .background(Color(colorHex.toColorInt()))) {
-        val tint: Color = if (isSelected) Color.White else Color.Transparent
+    IconButton(onClick = onClick) {
+        Box(modifier = modifier
+            .wrapContentSize(align = Alignment.Center)
+            .padding(4.dp)
+            .clip(CircleShape)
+            .background(Color(colorHex.toColorInt()))) {
+            val tint: Color = if (isSelected) Color.White else Color.Transparent
 
-        Icon(
-            imageVector = androidx.compose.material.icons.Icons.Default.Done,
-            contentDescription = "color selected",
-            tint = tint,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(4.dp)
-        )
+            Icon(
+                imageVector = androidx.compose.material.icons.Icons.Default.Done,
+                contentDescription = "color selected",
+                tint = tint,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(4.dp)
+            )
+        }
     }
 }

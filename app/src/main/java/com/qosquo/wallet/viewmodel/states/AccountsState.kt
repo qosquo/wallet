@@ -1,13 +1,15 @@
 package com.qosquo.wallet.viewmodel.states
 
 import com.qosquo.wallet.model.Account
+import com.qosquo.wallet.ui.Colors
+import com.qosquo.wallet.ui.Icons
 
 data class AccountsState(
     val accounts: List<Account> = emptyList(),
     val id: Long = 0,
     val name: String = "",
-    val initialBalance: Float = 0F,
+    val initialBalance: String = "",
     val mustBeCounted: Boolean = true,
-    val iconId: Int = 0,
-    val colorHex: String = "",
+    val iconId: Int = Icons.Accounts.entries[0].id,
+    val colorHex: String = Colors.entries[0].hex,
 )
