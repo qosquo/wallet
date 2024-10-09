@@ -1,9 +1,6 @@
 package com.qosquo.wallet.ui.screens
 
-import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.qosquo.wallet.R
-import com.qosquo.wallet.model.Account
 import kotlinx.serialization.Serializable
 
 sealed interface Screens {
@@ -18,6 +15,8 @@ sealed interface Screens {
     sealed class Categories {
         @Serializable
         object List
+        @Serializable
+        data class Form(val categoryId: Long?)
     }
 }
 

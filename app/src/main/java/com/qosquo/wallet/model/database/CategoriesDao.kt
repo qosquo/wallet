@@ -19,6 +19,11 @@ interface CategoriesDao {
             "categories.color_hex AS colorHex FROM categories")
     fun getAllCategoriesData(): List<Category>
 
+    @Query("SELECT categories.id, categories.category_name AS name," +
+            "categories.type, categories.goal, categories.category_icon_id AS iconId," +
+            "categories.color_hex AS colorHex FROM categories WHERE id = :categoryId LIMIT 1")
+    fun getCategoryFromId(categoryId: Long): Category
+
     @Query("DELETE FROM categories WHERE ID = :categoryId")
     fun deleteCategoryDataById(categoryId: Long)
 

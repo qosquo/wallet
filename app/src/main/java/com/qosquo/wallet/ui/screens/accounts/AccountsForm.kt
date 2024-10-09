@@ -302,7 +302,7 @@ fun CurrenciesDialog(
 }
 
 @Composable
-private fun SelectableColor(
+fun SelectableColor(
     onClick: () -> Unit,
     isSelected: Boolean = false,
     colorHex: String = "#000000",

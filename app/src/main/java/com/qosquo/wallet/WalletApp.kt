@@ -31,11 +31,13 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.qosquo.wallet.Dependencies.accountsViewModel
+import com.qosquo.wallet.Dependencies.categoriesViewModel
 import com.qosquo.wallet.ui.screens.TopLevelRoute
 import com.qosquo.wallet.ui.screens.Routes
 import com.qosquo.wallet.ui.screens.Screens
 import com.qosquo.wallet.ui.screens.accounts.AccountsForm
 import com.qosquo.wallet.ui.screens.accounts.AccountsList
+import com.qosquo.wallet.ui.screens.categories.CategoriesForm
 import com.qosquo.wallet.ui.screens.categories.CategoriesList
 
 fun NavBackStackEntry?.fromRoute(): String? {
@@ -80,6 +82,8 @@ fun WalletApp(
                                     R.string.accounts_form
                                 Screens.Categories.List::class.qualifiedName ->
                                     R.string.categories_list
+                                Screens.Categories.Form::class.qualifiedName ->
+                                    R.string.categories_form
                                 else -> { null }
                             }
                         }
@@ -89,6 +93,8 @@ fun WalletApp(
                     val canNavigateBack: Boolean = backStackEntry?.fromRoute().let {
                         when (it) {
                             Screens.Accounts.Form::class.qualifiedName ->
+                                true
+                            Screens.Categories.Form::class.qualifiedName ->
                                 true
                             else -> { false }
                         }
@@ -182,7 +188,20 @@ fun WalletApp(
                 composable<Screens.Categories.List> {
                     CategoriesList(
                         onNavigate = { id ->
+                            navController.navigate(Screens.Categories.Form(
+                                categoryId = id
+                            ))
+                        }
+                    )
+                }
 
+                composable<Screens.Categories.Form> {
+                    val id: Long? = it.toRoute<Screens.Categories.Form>().categoryId
+                    CategoriesForm(
+                        categoryId = id,
+                        onEvent = categoriesViewModel::onEvent,
+                        onNavigate = {
+                            navController.navigateUp()
                         }
                     )
                 }

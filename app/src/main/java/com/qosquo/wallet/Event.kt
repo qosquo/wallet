@@ -20,10 +20,10 @@ sealed interface Event {
     sealed class CategoriesEvent: Event {
         data object SaveCategory: CategoriesEvent()
 
-        data class ShowForm(val category: Category?) : CategoriesEvent()
+        data class SetCategoryById(val categoryId: Long?) : CategoriesEvent()
         data class SetName(val newName: String): CategoriesEvent()
         data class SetType(val newType: CategoryTypes): CategoriesEvent()
-        data class SetGoal(val newGoal: Float): CategoriesEvent()
+        data class SetGoal(val newGoal: String): CategoriesEvent()
         data class SetIconId(val newId: Int) : CategoriesEvent()
         data class SetColorHex(val newHex: String): CategoriesEvent()
     }

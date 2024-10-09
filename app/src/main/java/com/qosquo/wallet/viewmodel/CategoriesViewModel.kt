@@ -27,12 +27,14 @@ class CategoriesViewModel(
             Event.CategoriesEvent.SaveCategory -> {
                 val name = _state.value.name
                 val type = _state.value.type
-                val goal = _state.value.goal
+                val goal = _state.value.goal.toFloatOrNull()
                 val iconId = _state.value.iconId
                 val colorHex = _state.value.colorHex
 
-                if (name.isBlank() || iconId == 0 || colorHex.isBlank()
-                    || colorHex == "#000000" || type > 2 || type < 0 || goal < 0) {
+                if (name.isBlank() || (iconId == 0) || colorHex.isBlank()
+                    || (colorHex == "#000000") || (type > 2) || (type < 0) || (goal == null)
+                    || (goal < 0)
+                ) {
                     return
                 }
 
@@ -40,7 +42,7 @@ class CategoriesViewModel(
                     id = 0,
                     categoryName = name,
                     type = type,
-                    goal = goal,
+                    goal = goal / 100,
                     categoryIconId = iconId,
                     colorHex = colorHex
                 )
@@ -53,7 +55,7 @@ class CategoriesViewModel(
                         categories = updatedCategories,
                         name = "",
                         type = CategoryTypes.EXPENSES.id,
-                        goal = 0f,
+                        goal = "",
                         iconId = 0,
                         colorHex = "",
                     )
@@ -74,15 +76,16 @@ class CategoriesViewModel(
             is Event.CategoriesEvent.SetType -> {
                 _state.update { it.copy(type = event.newType.id) }
             }
-            is Event.CategoriesEvent.ShowForm -> {
-                if (event.category != null) {
+            is Event.CategoriesEvent.SetCategoryById -> {
+                if (event.categoryId != null) {
+                    val category = dao.getCategoryFromId(event.categoryId)
                     this.initialState = CategoriesState(
                         categories = dao.getAllCategoriesData(),
-                        name = event.category.name,
-                        type = event.category.type,
-                        goal = event.category.goal,
-                        iconId = event.category.iconId,
-                        colorHex = event.category.colorHex,
+                        name = category.name,
+                        type = category.type,
+                        goal = (category.goal * 100).toInt().toString(),
+                        iconId = category.iconId,
+                        colorHex = category.colorHex,
                     )
                 } else {
                     this.initialState = CategoriesState(

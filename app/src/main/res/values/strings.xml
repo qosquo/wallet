@@ -5,4 +5,5 @@
     <string name="accounts_form">Edit account</string>
 
     <string name="categories_list">Categories</string>
+    <string name="categories_form">Edit category</string>
 </resources>

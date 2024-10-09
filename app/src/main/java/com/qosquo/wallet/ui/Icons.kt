@@ -17,4 +17,18 @@ sealed interface Icons {
         SAFE_BOX(R.drawable.safe_box_line),
         WALLET(R.drawable.wallet_line)
     }
+
+    enum class Categories(@DrawableRes val id: Int) : Icons {
+        UNKNOWN(id = R.drawable.question_line),
+        HOME(id = R.drawable.home_3_line),
+        BED(id = R.drawable.bed_line),
+        SOFA(id = R.drawable.sofa_line),
+        BULB(id = R.drawable.bulb_2_line),
+        TOILET_PAPER(id = R.drawable.toilet_paper_line),
+        BUS(id = R.drawable.bus_line),
+        HAMBURGER(id = R.drawable.hamburger_line),
+        BABY(id = R.drawable.baby_line),
+        PARKING(id = R.drawable.parking_line),
+        CAR(id = R.drawable.car_line),
+    }
 }
