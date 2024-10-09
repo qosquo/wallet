@@ -6,7 +6,9 @@ import com.qosquo.wallet.ui.Colors
 import com.qosquo.wallet.ui.Icons
 
 data class CategoriesState(
-    val categories: List<Category> = emptyList(),
+    val id: Long = 0,
+    val expensesCategories: List<Category> = emptyList(),
+    val incomeCategories: List<Category> = emptyList(),
     val name: String = "",
     val type: Short = CategoryTypes.EXPENSES.id,
     val goal: String = "",

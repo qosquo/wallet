@@ -13,7 +13,10 @@ class CategoriesViewModel(
     private val dao: CategoriesDao
 ) {
     private val _state: MutableStateFlow<CategoriesState> = MutableStateFlow(
-        CategoriesState(categories = dao.getAllCategoriesData())
+        CategoriesState(
+            expensesCategories = dao.getCategoriesOfType(0),
+            incomeCategories = dao.getCategoriesOfType(1)
+        )
     )
     val state = _state.asStateFlow()
 
@@ -25,6 +28,7 @@ class CategoriesViewModel(
     fun onEvent(event: Event.CategoriesEvent) {
         when (event) {
             Event.CategoriesEvent.SaveCategory -> {
+                val id = _state.value.id
                 val name = _state.value.name
                 val type = _state.value.type
                 val goal = _state.value.goal.toFloatOrNull()
@@ -32,27 +36,28 @@ class CategoriesViewModel(
                 val colorHex = _state.value.colorHex
 
                 if (name.isBlank() || (iconId == 0) || colorHex.isBlank()
-                    || (colorHex == "#000000") || (type > 2) || (type < 0) || (goal == null)
-                    || (goal < 0)
+                    || (colorHex == "#000000") || (type > 2) || (type < 0)
                 ) {
                     return
                 }
 
                 val newCategory = CategoriesDbEntity(
-                    id = 0,
+                    id = id,
                     categoryName = name,
                     type = type,
-                    goal = goal / 100,
+                    goal = goal?.div(100) ?: 0F,
                     categoryIconId = iconId,
                     colorHex = colorHex
                 )
 
                 dao.upsertNewCategoryData(newCategory)
-                val updatedCategories = dao.getAllCategoriesData()
+                val updatedExpenses = dao.getCategoriesOfType(0)
+                val updatedIncome = dao.getCategoriesOfType(1)
 
                 _state.update {
                     it.copy(
-                        categories = updatedCategories,
+                        expensesCategories = updatedExpenses,
+                        incomeCategories = updatedIncome,
                         name = "",
                         type = CategoryTypes.EXPENSES.id,
                         goal = "",
@@ -80,7 +85,9 @@ class CategoriesViewModel(
                 if (event.categoryId != null) {
                     val category = dao.getCategoryFromId(event.categoryId)
                     this.initialState = CategoriesState(
-                        categories = dao.getAllCategoriesData(),
+                        expensesCategories = dao.getCategoriesOfType(0),
+                        incomeCategories = dao.getCategoriesOfType(1),
+                        id = category.id,
                         name = category.name,
                         type = category.type,
                         goal = (category.goal * 100).toInt().toString(),
@@ -89,7 +96,8 @@ class CategoriesViewModel(
                     )
                 } else {
                     this.initialState = CategoriesState(
-                        categories = dao.getAllCategoriesData()
+                        expensesCategories = dao.getCategoriesOfType(0),
+                        incomeCategories = dao.getCategoriesOfType(1)
                     )
                 }
 

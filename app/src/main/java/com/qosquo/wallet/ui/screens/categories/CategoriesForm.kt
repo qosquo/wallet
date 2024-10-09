@@ -52,7 +52,7 @@ fun CategoriesForm(
 ) {
 
     val state by Dependencies.categoriesViewModel.state.collectAsStateWithLifecycle()
-//    onEvent(Event.CategoriesEvent.SetCategoryById(categoryId))
+    onEvent(Event.CategoriesEvent.SetCategoryById(categoryId))
 
     Scaffold(
         floatingActionButton = {

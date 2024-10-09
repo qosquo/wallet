@@ -1,6 +1,5 @@
 package com.qosquo.wallet
 
-import com.qosquo.wallet.model.Category
 import com.qosquo.wallet.model.CategoryTypes
 
 sealed interface Event {

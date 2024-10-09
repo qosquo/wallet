@@ -187,6 +187,7 @@ fun WalletApp(
             ) {
                 composable<Screens.Categories.List> {
                     CategoriesList(
+                        onTabChange = categoriesViewModel::onEvent,
                         onNavigate = { id ->
                             navController.navigate(Screens.Categories.Form(
                                 categoryId = id

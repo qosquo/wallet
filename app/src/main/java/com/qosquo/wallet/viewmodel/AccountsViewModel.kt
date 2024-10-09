@@ -55,14 +55,13 @@ class AccountsViewModel(
                 val colorHex = _state.value.colorHex
 
                 if (name.isBlank() || iconId == 0 ||
-                    colorHex.isBlank() || colorHex == "#000000" ||
-                    initialBalance == null) {
+                    colorHex.isBlank() || colorHex == "#000000") {
                     return
                 }
 
                 val newAccount = AccountsDbEntity(
                     id = id,
-                    balance = initialBalance / 100,
+                    balance = initialBalance?.div(100) ?: 0F,
                     currency = currency,
                     accountName = name,
                     accountIconId = iconId,

@@ -21,6 +21,12 @@ interface CategoriesDao {
 
     @Query("SELECT categories.id, categories.category_name AS name," +
             "categories.type, categories.goal, categories.category_icon_id AS iconId," +
+            "categories.color_hex AS colorHex FROM categories " +
+            "WHERE categories.type = :typeId")
+    fun getCategoriesOfType(typeId: Short): List<Category>
+
+    @Query("SELECT categories.id, categories.category_name AS name," +
+            "categories.type, categories.goal, categories.category_icon_id AS iconId," +
             "categories.color_hex AS colorHex FROM categories WHERE id = :categoryId LIMIT 1")
     fun getCategoryFromId(categoryId: Long): Category
 
