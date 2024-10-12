@@ -37,5 +37,8 @@ object Dependencies {
     val categoriesViewModel by lazy {
         CategoriesViewModel(_appDatabase.getCategoriesDao())
     }
+    val transactionsViewModel by lazy {
+        TransactionViewModel(_appDatabase.getTransactionsDao())
+    }
 
 }

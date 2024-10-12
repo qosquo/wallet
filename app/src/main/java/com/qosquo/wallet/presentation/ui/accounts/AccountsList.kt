@@ -99,11 +99,10 @@ fun AccountsList(
                     },
                     trailingContent = {
                         val currency = Currencies.entries[account.currency]
-                        val balanceText = if (currency.isLeftSide) {
-                            "${currency.symbol}${account.balance.toInt()}"
-                        } else {
-                            "${account.balance.toInt()}${currency.symbol}"
-                        }
+                        val balanceText = amountToStringWithCurrency(
+                            amount = account.balance,
+                            currency = currency
+                        )
                         Text(text = balanceText)
                     },
                     modifier = modifier
