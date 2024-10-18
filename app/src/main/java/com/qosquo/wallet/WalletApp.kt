@@ -175,7 +175,7 @@ fun WalletApp(
                     val id: Long? = it.toRoute<Screens.Accounts.Form>().accountId
                     AccountsForm(
                         accountId = id,
-                        onEvent = accountsViewModel::onEvent,
+                        onEvent = accountsViewModel::onAction,
                         onNavigate = {
                             navController.navigateUp()
                         }
@@ -188,7 +188,7 @@ fun WalletApp(
             ) {
                 composable<Screens.Categories.List> {
                     CategoriesList(
-                        onTabChange = categoriesViewModel::onEvent,
+                        onTabChange = categoriesViewModel::onAction,
                         onNavigate = { id ->
                             navController.navigate(
                                 Screens.Categories.Form(
@@ -202,7 +202,7 @@ fun WalletApp(
                     val id: Long? = it.toRoute<Screens.Categories.Form>().categoryId
                     CategoriesForm(
                         categoryId = id,
-                        onEvent = categoriesViewModel::onEvent,
+                        onEvent = categoriesViewModel::onAction,
                         onNavigate = {
                             navController.navigateUp()
                         }

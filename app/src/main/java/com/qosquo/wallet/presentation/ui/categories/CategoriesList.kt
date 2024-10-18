@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.Dependencies
-import com.qosquo.wallet.Event
 import com.qosquo.wallet.domain.CategoryTypes
 import kotlinx.coroutines.launch
 
@@ -51,7 +50,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CategoriesList(
-    onTabChange: (Event.CategoriesEvent.SetType) -> Unit,
+    onTabChange: (CategoriesAction.SetType) -> Unit,
     onNavigate: (id: Long?) -> Unit
 ) {
     val state by Dependencies.categoriesViewModel.state.collectAsStateWithLifecycle()
@@ -84,7 +83,7 @@ fun CategoriesList(
 
             LaunchedEffect(pagerState.currentPage) {
                 selectedTabIndex = pagerState.currentPage
-                onTabChange(Event.CategoriesEvent.SetType(
+                onTabChange(CategoriesAction.SetType(
                     CategoryTypes.entries[pagerState.currentPage]
                 ))
             }
@@ -100,7 +99,7 @@ fun CategoriesList(
                                 pagerState.animateScrollToPage(index)
                             }
                             selectedTabIndex = index
-                            onTabChange(Event.CategoriesEvent.SetType(
+                            onTabChange(CategoriesAction.SetType(
                                 CategoryTypes.entries[pagerState.currentPage]
                             ))
                         }

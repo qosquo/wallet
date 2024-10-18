@@ -32,7 +32,6 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.utils.CurrencyAmountInputVisualTransformation
 import com.qosquo.wallet.Dependencies
-import com.qosquo.wallet.Event
 import com.qosquo.wallet.domain.Currencies
 import com.qosquo.wallet.domain.Colors
 import com.qosquo.wallet.domain.Icons
@@ -41,17 +40,17 @@ import com.qosquo.wallet.presentation.ui.accounts.SelectableColor
 @Composable
 fun CategoriesForm(
     categoryId: Long?,
-    onEvent: (Event.CategoriesEvent) -> Unit,
+    onEvent: (CategoriesAction) -> Unit,
     onNavigate: () -> Unit
 ) {
 
     val state by Dependencies.categoriesViewModel.state.collectAsStateWithLifecycle()
-    onEvent(Event.CategoriesEvent.SetCategoryById(categoryId))
+    onEvent(CategoriesAction.SetCategoryById(categoryId))
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                onEvent(Event.CategoriesEvent.SaveCategory)
+                onEvent(CategoriesAction.SaveCategory)
                 onNavigate()
             }) {
                 Icon(
@@ -73,7 +72,7 @@ fun CategoriesForm(
             OutlinedTextField(
                 value = state.name,
                 onValueChange = {
-                    onEvent(Event.CategoriesEvent.SetName(it))
+                    onEvent(CategoriesAction.SetName(it))
                 },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -90,7 +89,7 @@ fun CategoriesForm(
                     } else {
                         it
                     }
-                    onEvent(Event.CategoriesEvent.SetGoal(value))
+                    onEvent(CategoriesAction.SetGoal(value))
                 },
                 visualTransformation = CurrencyAmountInputVisualTransformation(),
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -119,7 +118,7 @@ fun CategoriesForm(
                 items(icons) { icon ->
                     IconButton(
                         onClick = {
-                            onEvent(Event.CategoriesEvent.SetIconId(icon.id))
+                            onEvent(CategoriesAction.SetIconId(icon.id))
                         },
                     ) {
                         val isSelected = state.iconId == icon.id
@@ -148,7 +147,7 @@ fun CategoriesForm(
                 items(colors) { color ->
                     SelectableColor(
                         onClick = {
-                            onEvent(Event.CategoriesEvent.SetColorHex(color.hex))
+                            onEvent(CategoriesAction.SetColorHex(color.hex))
                         },
                         modifier = Modifier
                             .size(48.dp),

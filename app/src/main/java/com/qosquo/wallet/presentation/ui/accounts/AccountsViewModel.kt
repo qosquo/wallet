@@ -1,7 +1,6 @@
 package com.qosquo.wallet.presentation.ui.accounts
 
 import androidx.lifecycle.ViewModel
-import com.qosquo.wallet.Event
 import com.qosquo.wallet.domain.Currencies
 import com.qosquo.wallet.data.db.dao.AccountsDao
 import com.qosquo.wallet.data.db.entity.AccountsDbEntity
@@ -41,9 +40,9 @@ class AccountsViewModel(
         return initialState == _state.value
     }
 
-    fun onEvent(event: Event.AccountsEvent) {
-        when (event) {
-            Event.AccountsEvent.SaveAccount -> {
+    fun onAction(action: AccountsAction) {
+        when (action) {
+            AccountsAction.SaveAccount -> {
                 val id = _state.value.id
                 val name = _state.value.name
                 val initialBalance = _state.value.initialBalance.toFloatOrNull()
@@ -88,29 +87,29 @@ class AccountsViewModel(
                 }
             }
 
-            is Event.AccountsEvent.SetInitialBalance -> {
-                _state.update { it.copy(initialBalance = event.newBalance) }
+            is AccountsAction.SetInitialBalance -> {
+                _state.update { it.copy(initialBalance = action.newBalance) }
             }
-            is Event.AccountsEvent.SetName -> {
-                _state.update { it.copy(name = event.newName) }
+            is AccountsAction.SetName -> {
+                _state.update { it.copy(name = action.newName) }
             }
-            is Event.AccountsEvent.SetMustBeCounted -> {
-                _state.update { it.copy(mustBeCounted = event.newValue) }
+            is AccountsAction.SetMustBeCounted -> {
+                _state.update { it.copy(mustBeCounted = action.newValue) }
             }
-            is Event.AccountsEvent.SetIconId -> {
-                _state.update { it.copy(iconId = event.newId) }
+            is AccountsAction.SetIconId -> {
+                _state.update { it.copy(iconId = action.newId) }
             }
-            is Event.AccountsEvent.SetColorHex -> {
-                _state.update { it.copy(colorHex = event.newHex) }
-            }
-
-            is Event.AccountsEvent.SetCurrency -> {
-                _state.update { it.copy(currency = event.newCurrency) }
+            is AccountsAction.SetColorHex -> {
+                _state.update { it.copy(colorHex = action.newHex) }
             }
 
-            is Event.AccountsEvent.SetAccountById -> {
-                if (event.accountId != null) {
-                    val account = dao.getAccountFromId(event.accountId)
+            is AccountsAction.SetCurrency -> {
+                _state.update { it.copy(currency = action.newCurrency) }
+            }
+
+            is AccountsAction.SetAccountById -> {
+                if (action.accountId != null) {
+                    val account = dao.getAccountFromId(action.accountId)
                     this.initialState = AccountsState(
                         accounts = dao.getAllAccountsData(),
                         id = account.id,

@@ -1,6 +1,5 @@
 package com.qosquo.wallet.presentation.ui.categories
 
-import com.qosquo.wallet.Event
 import com.qosquo.wallet.domain.CategoryTypes
 import com.qosquo.wallet.data.db.dao.CategoriesDao
 import com.qosquo.wallet.data.db.entity.CategoriesDbEntity
@@ -24,9 +23,9 @@ class CategoriesViewModel(
         return initialState == _state.value
     }
 
-    fun onEvent(event: Event.CategoriesEvent) {
-        when (event) {
-            Event.CategoriesEvent.SaveCategory -> {
+    fun onAction(action: CategoriesAction) {
+        when (action) {
+            CategoriesAction.SaveCategory -> {
                 val id = _state.value.id
                 val name = _state.value.name
                 val type = _state.value.type
@@ -65,24 +64,24 @@ class CategoriesViewModel(
                     )
                 }
             }
-            is Event.CategoriesEvent.SetColorHex -> {
-                _state.update { it.copy(colorHex = event.newHex) }
+            is CategoriesAction.SetColorHex -> {
+                _state.update { it.copy(colorHex = action.newHex) }
             }
-            is Event.CategoriesEvent.SetGoal -> {
-                _state.update { it.copy(goal = event.newGoal) }
+            is CategoriesAction.SetGoal -> {
+                _state.update { it.copy(goal = action.newGoal) }
             }
-            is Event.CategoriesEvent.SetIconId -> {
-                _state.update { it.copy(iconId = event.newId) }
+            is CategoriesAction.SetIconId -> {
+                _state.update { it.copy(iconId = action.newId) }
             }
-            is Event.CategoriesEvent.SetName -> {
-                _state.update { it.copy(name = event.newName) }
+            is CategoriesAction.SetName -> {
+                _state.update { it.copy(name = action.newName) }
             }
-            is Event.CategoriesEvent.SetType -> {
-                _state.update { it.copy(type = event.newType.id) }
+            is CategoriesAction.SetType -> {
+                _state.update { it.copy(type = action.newType.id) }
             }
-            is Event.CategoriesEvent.SetCategoryById -> {
-                if (event.categoryId != null) {
-                    val category = dao.getCategoryFromId(event.categoryId)
+            is CategoriesAction.SetCategoryById -> {
+                if (action.categoryId != null) {
+                    val category = dao.getCategoryFromId(action.categoryId)
                     this.initialState = CategoriesState(
                         expensesCategories = dao.getCategoriesOfType(0),
                         incomeCategories = dao.getCategoriesOfType(1),

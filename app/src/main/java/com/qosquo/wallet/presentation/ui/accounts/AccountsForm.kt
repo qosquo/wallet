@@ -53,7 +53,6 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.utils.CurrencyAmountInputVisualTransformation
 import com.qosquo.wallet.Dependencies
-import com.qosquo.wallet.Event
 import com.qosquo.wallet.domain.Currencies
 import com.qosquo.wallet.domain.Colors
 import com.qosquo.wallet.domain.Icons
@@ -62,11 +61,11 @@ import com.qosquo.wallet.domain.Icons
 @Composable
 fun AccountsForm(
     accountId: Long?,
-    onEvent: (Event.AccountsEvent) -> Unit,
+    onEvent: (AccountsAction) -> Unit,
     onNavigate: () -> Unit
 ) {
     val state by Dependencies.accountsViewModel.state.collectAsStateWithLifecycle()
-    onEvent(Event.AccountsEvent.SetAccountById(accountId))
+    onEvent(AccountsAction.SetAccountById(accountId))
 
     val openCurrenciesDialog = remember {
         mutableStateOf(false)
@@ -75,7 +74,7 @@ fun AccountsForm(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                onEvent(Event.AccountsEvent.SaveAccount)
+                onEvent(AccountsAction.SaveAccount)
                 onNavigate()
             }) {
                 Icon(
@@ -92,7 +91,7 @@ fun AccountsForm(
                         openCurrenciesDialog.value = false
                     },
                     onConfirmation = { value ->
-                        onEvent(Event.AccountsEvent.SetCurrency(value))
+                        onEvent(AccountsAction.SetCurrency(value))
                         openCurrenciesDialog.value = false
                     },
                     defaultValue = state.currency
@@ -112,7 +111,7 @@ fun AccountsForm(
             OutlinedTextField(
                 value = state.name,
                 onValueChange = {
-                    onEvent(Event.AccountsEvent.SetName(it))
+                    onEvent(AccountsAction.SetName(it))
                 },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -129,7 +128,7 @@ fun AccountsForm(
                     } else {
                         it
                     }
-                    onEvent(Event.AccountsEvent.SetInitialBalance(value))
+                    onEvent(AccountsAction.SetInitialBalance(value))
                 },
                 visualTransformation = CurrencyAmountInputVisualTransformation(),
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -161,7 +160,7 @@ fun AccountsForm(
                 items(icons) { icon ->
                     IconButton(
                         onClick = {
-                            onEvent(Event.AccountsEvent.SetIconId(icon.id))
+                            onEvent(AccountsAction.SetIconId(icon.id))
                         },
                     ) {
                         val isSelected = state.iconId == icon.id
@@ -190,7 +189,7 @@ fun AccountsForm(
                 items(colors) { color ->
                     SelectableColor(
                         onClick = {
-                            onEvent(Event.AccountsEvent.SetColorHex(color.hex))
+                            onEvent(AccountsAction.SetColorHex(color.hex))
                         },
                         modifier = Modifier
                             .size(48.dp),
@@ -212,7 +211,7 @@ fun AccountsForm(
                 Switch(
                     checked = state.mustBeCounted,
                     onCheckedChange = {
-                        onEvent(Event.AccountsEvent.SetMustBeCounted(it))
+                        onEvent(AccountsAction.SetMustBeCounted(it))
                     }
                 )
             }
