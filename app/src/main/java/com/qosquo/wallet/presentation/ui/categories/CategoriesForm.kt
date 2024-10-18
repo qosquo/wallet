@@ -2,6 +2,7 @@ package com.qosquo.wallet.presentation.ui.categories
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,19 +13,25 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -32,11 +39,13 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.utils.CurrencyAmountInputVisualTransformation
 import com.qosquo.wallet.Dependencies
+import com.qosquo.wallet.R
 import com.qosquo.wallet.domain.Currencies
 import com.qosquo.wallet.domain.Colors
 import com.qosquo.wallet.domain.Icons
 import com.qosquo.wallet.presentation.ui.accounts.SelectableColor
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesForm(
     categoryId: Long?,
@@ -48,6 +57,21 @@ fun CategoriesForm(
     onEvent(CategoriesAction.SetCategoryById(categoryId))
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(id = R.string.categories_form))
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigate) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "back button"
+                        )
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 onEvent(CategoriesAction.SaveCategory)
@@ -58,11 +82,15 @@ fun CategoriesForm(
                     contentDescription = "add"
                 )
             }
-        }
-    ) { _ ->
+        },
+        contentWindowInsets = ScaffoldDefaults
+            .contentWindowInsets
+            .exclude(NavigationBarDefaults.windowInsets)
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
             Text(
