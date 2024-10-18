@@ -1,16 +1,14 @@
 package com.qosquo.wallet
 
 import android.content.Context
-import androidx.activity.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.qosquo.wallet.model.database.AppDatabase
-import com.qosquo.wallet.viewmodel.AccountsViewModel
-import com.qosquo.wallet.viewmodel.CategoriesViewModel
+import com.qosquo.wallet.data.db.database.AppDatabase
+import com.qosquo.wallet.data.db.migration.MIGRATION_6_7
+import com.qosquo.wallet.data.db.migration.MIGRATION_7_8
+import com.qosquo.wallet.presentation.ui.accounts.AccountsViewModel
+import com.qosquo.wallet.presentation.ui.categories.CategoriesViewModel
 
 object Dependencies {
 
@@ -21,35 +19,11 @@ object Dependencies {
 //        _appDatabase.clearAllTables()
     }
 
-    private val MIGRATION_6_7 = object : Migration(6,7) {
-        override fun migrate(db: SupportSQLiteDatabase) {
-            db.execSQL("CREATE TABLE 'categories' ('color_hex' TEXT NOT NULL, 'category_icon_id' INTEGER NOT NULL, " +
-                    "'id' INTEGER NOT NULL, 'category_name' TEXT NOT NULL, " +
-                    "'goal' REAL NOT NULL, 'type' INTEGER NOT NULL, " +
-                    "PRIMARY KEY('id'))")
-            db.execSQL("DROP TABLE 'transactions';")
-            db.execSQL("CREATE TABLE 'transactions' ('id' INTEGER NOT NULL, 'amount' REAL NOT NULL, " +
-                    "'account_id' INTEGER NOT NULL, 'category_id' INTEGER NOT NULL, " +
-                    "'date' INTEGER NOT NULL, 'notes' TEXT NOT NULL, " +
-                    "PRIMARY KEY('id'), " +
-                    "FOREIGN KEY ('account_id') REFERENCES accounts('id'), " +
-                    "FOREIGN KEY ('category_id') REFERENCES categories('id')" +
-                    ");")
-            db.execSQL("CREATE INDEX 'index_transactions_id' ON transactions('id')")
-        }
-    }
-
-    private val MIGRATION_7_8 = object : Migration(7,8) {
-        override fun migrate(db: SupportSQLiteDatabase) {
-            db.execSQL("ALTER TABLE accounts ADD COLUMN currency INTEGER NOT NULL DEFAULT 0")
-        }
-    }
-
     private val _appDatabase: AppDatabase by lazy {
         Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
-            "database_test.db"
+            "database.db"
         )
             .addMigrations(MIGRATION_6_7)
             .addMigrations(MIGRATION_7_8)

@@ -32,13 +32,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.qosquo.wallet.Dependencies.accountsViewModel
 import com.qosquo.wallet.Dependencies.categoriesViewModel
-import com.qosquo.wallet.ui.screens.TopLevelRoute
-import com.qosquo.wallet.ui.screens.Routes
-import com.qosquo.wallet.ui.screens.Screens
-import com.qosquo.wallet.ui.screens.accounts.AccountsForm
-import com.qosquo.wallet.ui.screens.accounts.AccountsList
-import com.qosquo.wallet.ui.screens.categories.CategoriesForm
-import com.qosquo.wallet.ui.screens.categories.CategoriesList
+import com.qosquo.wallet.presentation.navigation.TopLevelRoute
+import com.qosquo.wallet.presentation.navigation.Routes
+import com.qosquo.wallet.presentation.navigation.Screens
+import com.qosquo.wallet.presentation.ui.accounts.AccountsForm
+import com.qosquo.wallet.presentation.ui.accounts.AccountsList
+import com.qosquo.wallet.presentation.ui.categories.CategoriesForm
+import com.qosquo.wallet.presentation.ui.categories.CategoriesList
 
 fun NavBackStackEntry?.fromRoute(): String? {
     return this?.destination?.route?.substringBefore("?")?.substringBefore("/")
@@ -163,7 +163,8 @@ fun WalletApp(
                 composable<Screens.Accounts.List> {
                     AccountsList(
                         onNavigate = { id ->
-                            navController.navigate(Screens.Accounts.Form(
+                            navController.navigate(
+                                Screens.Accounts.Form(
                                 accountId = id
                             ))
                         }
@@ -189,7 +190,8 @@ fun WalletApp(
                     CategoriesList(
                         onTabChange = categoriesViewModel::onEvent,
                         onNavigate = { id ->
-                            navController.navigate(Screens.Categories.Form(
+                            navController.navigate(
+                                Screens.Categories.Form(
                                 categoryId = id
                             ))
                         }

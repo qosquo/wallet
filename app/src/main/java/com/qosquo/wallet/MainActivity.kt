@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.qosquo.wallet.ui.theme.WalletTheme
+import com.qosquo.wallet.presentation.ui.theme.WalletTheme
 
 class MainActivity : ComponentActivity() {
 
