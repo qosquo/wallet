@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,6 +41,7 @@ import com.qosquo.wallet.presentation.ui.accounts.AccountsList
 import com.qosquo.wallet.presentation.ui.categories.CategoriesForm
 import com.qosquo.wallet.presentation.ui.categories.CategoriesList
 import com.qosquo.wallet.presentation.ui.theme.WalletTheme
+import com.qosquo.wallet.utils.fromRoute
 
 class MainActivity : ComponentActivity() {
 
@@ -84,7 +87,20 @@ class MainActivity : ComponentActivity() {
                         navigation<Routes.Accounts> (
                             startDestination = Screens.Accounts.List,
                         ) {
-                            composable<Screens.Accounts.List> {
+                            composable<Screens.Accounts.List>(
+                                enterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                },
+                                popEnterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                },
+                                popExitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                }
+                            ) {
                                 AccountsList(
                                     onNavigate = { id ->
                                         navController.navigate(
@@ -95,7 +111,24 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
-                            composable<Screens.Accounts.Form> {
+                            composable<Screens.Accounts.Form>(
+                                enterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                },
+                                popEnterTransition = {
+                                    when (initialState.fromRoute()) {
+                                        Screens.Accounts.Form::class.qualifiedName ->
+                                           slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                        else -> null
+                                    }
+                                },
+                                popExitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                }
+                            ) {
                                 val id: Long? = it.toRoute<Screens.Accounts.Form>().accountId
                                 AccountsForm(
                                     accountId = id,
@@ -110,7 +143,24 @@ class MainActivity : ComponentActivity() {
                         navigation<Routes.Categories>(
                             startDestination = Screens.Categories.List,
                         ) {
-                            composable<Screens.Categories.List> {
+                            composable<Screens.Categories.List>(
+                                enterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                },
+                                popEnterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                },
+                                popExitTransition = {
+                                    when (targetState.fromRoute()) {
+                                        Screens.Accounts.List::class.qualifiedName ->
+                                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                        else -> null
+                                    }
+                                }
+                            ) {
                                 CategoriesList(
                                     onTabChange = categoriesViewModel::onAction,
                                     onNavigate = { id ->
@@ -122,7 +172,20 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
-                            composable<Screens.Categories.Form> {
+                            composable<Screens.Categories.Form>(
+                                enterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                },
+                                popEnterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                },
+                                popExitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                }
+                            ) {
                                 val id: Long? = it.toRoute<Screens.Categories.Form>().categoryId
                                 CategoriesForm(
                                     categoryId = id,
