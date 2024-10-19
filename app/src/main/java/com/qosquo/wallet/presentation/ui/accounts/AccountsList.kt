@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
@@ -74,19 +75,12 @@ fun AccountsList(
                 .padding(innerPadding)
         ) {
             items(state.accounts) { account ->
-                Card(
-                    modifier = Modifier
-                        .padding(vertical = 4.dp)
-                        .clickable {
-                            onNavigate(account.id)
-                        }
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                ListItem(
+                    headlineContent = {
+                        Text(text = account.name)
+                    },
+                    leadingContent = {
+
                         Box(modifier = Modifier
                             .size(32.dp)
                             .clip(CircleShape)
@@ -102,12 +96,8 @@ fun AccountsList(
                                     .padding(4.dp)
                             )
                         }
-                        Text(
-                            text = account.name,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 8.dp)
-                        )
+                    },
+                    trailingContent = {
                         val currency = Currencies.entries[account.currency]
                         val balanceText = if (currency.isLeftSide) {
                             "${currency.symbol}${account.balance.toInt()}"
@@ -115,8 +105,13 @@ fun AccountsList(
                             "${account.balance.toInt()}${currency.symbol}"
                         }
                         Text(text = balanceText)
-                    }
-                }
+                    },
+                    modifier = modifier
+                        .padding(vertical = 4.dp)
+                        .clickable {
+                            onNavigate(account.id)
+                        }
+                )
             }
         }
     }
