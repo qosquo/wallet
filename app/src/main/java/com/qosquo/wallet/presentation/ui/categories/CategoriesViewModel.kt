@@ -57,7 +57,7 @@ class CategoriesViewModel(
                         expensesCategories = updatedExpenses,
                         incomeCategories = updatedIncome,
                         name = "",
-                        type = CategoryTypes.EXPENSES.id,
+                        type = CategoryTypes.EXPENSES.ordinal,
                         goal = "",
                         iconId = 0,
                         colorHex = "",

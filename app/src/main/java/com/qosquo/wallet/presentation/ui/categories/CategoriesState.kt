@@ -10,7 +10,7 @@ data class CategoriesState(
     val expensesCategories: List<Category> = emptyList(),
     val incomeCategories: List<Category> = emptyList(),
     val name: String = "",
-    val type: Short = CategoryTypes.EXPENSES.id,
+    val type: Int = CategoryTypes.EXPENSES.ordinal,
     val goal: String = "",
     val iconId: Int = Icons.Categories.entries[0].id,
     val colorHex: String = Colors.entries[0].hex

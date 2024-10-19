@@ -2,7 +2,6 @@ package com.qosquo.wallet.presentation.ui.operations
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
@@ -12,6 +11,9 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -29,22 +31,34 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.qosquo.wallet.Dependencies
+import com.qosquo.wallet.amountToStringWithCurrency
+import com.qosquo.wallet.model.Currencies
 import com.qosquo.wallet.domain.Colors
 import com.qosquo.wallet.domain.Currencies
 import com.qosquo.wallet.domain.Icons
 import com.qosquo.wallet.domain.Transaction
 import java.util.Calendar
 import java.util.Locale
-import kotlin.math.abs
 
 @Composable
 fun OperationsList(
-    navigate: (transactionId: Long) -> Unit,
+    navigate: (
+        transactionId: Long?,
+        transactionAccountId: Long?,
+        transactionCategoryId: Long?,
+    ) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by Dependencies.transactionsViewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                navigate(null, null, null)
+            }) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "add")
+            }
+        },
         modifier = modifier
     ) { innerPadding ->
         LazyColumn(
@@ -81,54 +95,7 @@ fun OperationsList(
                         )
                     },
                     trailingContent = {
-                        state.transactionsPerDay[unixtime]?.let { transactions ->
-                            val currencySumMap: MutableMap<Int, Double> = emptyMap<Int, Double>().toMutableMap()
-                            Currencies.entries.forEach { currency ->
-                                val sumOfCurrency = transactions.sumOf {
-                                    if (it.accountCurrency == currency.ordinal) {
-                                        it.amount.toDouble()
-                                    } else {
-                                        0.toDouble()
-                                    }
-                                }
-                                currencySumMap[currency.ordinal] = sumOfCurrency
-                            }
-                            val sortedCurrencySumMap = currencySumMap.toSortedMap(
-                                compareBy<Int> { currencySumMap[it] }.thenBy { it }
-                            )
-                            Column(
-                                modifier = modifier,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                val mapKeys = sortedCurrencySumMap.keys.toList()
-                                val firstCurrency = mapKeys[0]
-                                sortedCurrencySumMap[firstCurrency]?.let {
-                                    val text = amountToStringWithCurrency(
-                                        amount = it.toFloat(),
-                                        currency = Currencies.entries[firstCurrency]
-                                    )
-                                    Text(
-                                        text = text,
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                }
-                                val secondCurrency = mapKeys[1]
-                                sortedCurrencySumMap[secondCurrency]?.let {
-                                    val text = amountToStringWithCurrency(
-                                        amount = it.toFloat(),
-                                        currency = Currencies.entries[secondCurrency]
-                                    )
-                                    if (abs(it) >= 0.01) {
-                                        Text(
-                                            text = text,
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.secondary
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                        // TODO: SUM ONLY BY APP'S MAIN CURRENCY
                     }
                 )
                 HorizontalDivider()
@@ -157,7 +124,7 @@ fun OperationsList(
                                             .size(36.dp)
                                             .wrapContentSize(align = Alignment.Center)
                                             .clip(CircleShape)
-                                            .background(Color(item.colorHex.toColorInt()))
+                                            .background(Color(item.categoryColorHex.toColorInt()))
                                     ) {
 
                                         Icon(
@@ -184,7 +151,7 @@ fun OperationsList(
                                 },
                                 modifier = modifier
                                     .clickable {
-                                        navigate(item.id)
+                                        navigate(item.id, item.accountId, item.categoryId)
                                     }
                             )
                             HorizontalDivider(modifier = modifier.padding(horizontal = 8.dp))

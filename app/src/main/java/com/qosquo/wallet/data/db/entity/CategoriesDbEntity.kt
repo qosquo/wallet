@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
 data class CategoriesDbEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "category_name") val categoryName: String,
-    val type: Short,
+    val type: Int,
     val goal: Float,
     @ColumnInfo(name = "category_icon_id") @DrawableRes val categoryIconId: Int,
     @ColumnInfo(name = "color_hex") val colorHex: String
