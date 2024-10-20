@@ -133,12 +133,12 @@ fun CategoriesList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-            ) {
+            ) { index ->
                 LazyColumn(
                     contentPadding = PaddingValues(16.dp),
                     modifier = Modifier.fillMaxSize()
                 )  {
-                    val categories = if (selectedTabIndex == 0) {
+                    val categories = if (index == 0) {
                         state.expensesCategories
                     } else {
                         state.incomeCategories

@@ -56,7 +56,6 @@ import com.qosquo.wallet.R
 import com.qosquo.wallet.domain.CategoryTypes
 import com.qosquo.wallet.presentation.ui.categories.CategoriesAction
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -139,12 +138,12 @@ fun CategoriesSelection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-            ) {
+            ) { index ->
                 LazyColumn(
                     contentPadding = PaddingValues(16.dp),
                     modifier = Modifier.fillMaxSize()
                 )  {
-                    val categories = if (selectedTabIndex == 0) {
+                    val categories = if (index == 0) {
                         state.expensesCategories
                     } else {
                         state.incomeCategories
