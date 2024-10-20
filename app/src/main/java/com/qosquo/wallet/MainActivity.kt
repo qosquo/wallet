@@ -127,13 +127,27 @@ class MainActivity : ComponentActivity() {
 
                             composable<Screens.Operations.Form>(
                                 enterTransition = {
-                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                    when (initialState.fromRoute()) {
+                                        Screens.Operations.List::class.qualifiedName ->
+                                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                        Screens.Operations.AccountSelection::class.qualifiedName,
+                                        Screens.Operations.CategorySelection::class.qualifiedName ->
+                                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                        else -> null
+                                    }
                                 },
                                 exitTransition = {
                                     slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
                                 },
                                 popEnterTransition = {
-                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                    when (initialState.fromRoute()) {
+                                        Screens.Operations.List::class.qualifiedName ->
+                                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                        Screens.Operations.AccountSelection::class.qualifiedName,
+                                        Screens.Operations.CategorySelection::class.qualifiedName ->
+                                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                        else -> null
+                                    }
                                 },
                                 popExitTransition = {
                                     slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
@@ -167,7 +181,20 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
-                            composable<Screens.Operations.AccountSelection> {
+                            composable<Screens.Operations.AccountSelection>(
+                                enterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                },
+                                popEnterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                },
+                                popExitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                }
+                            ) {
                                 AccountsSelection(
                                     onSelect = { accountId ->
                                         navController.navigateUp()
@@ -180,7 +207,20 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
-                            composable<Screens.Operations.CategorySelection> {
+                            composable<Screens.Operations.CategorySelection>(
+                                enterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                },
+                                popEnterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                },
+                                popExitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                }
+                            ) {
                                 CategoriesSelection(
                                     onTabChange = Dependencies.categoriesViewModel::onAction,
                                     onSelect = { categoryId ->
