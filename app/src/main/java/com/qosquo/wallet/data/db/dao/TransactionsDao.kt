@@ -5,10 +5,10 @@ import androidx.room.Insert
 import androidx.room.MapColumn
 import androidx.room.Query
 import androidx.room.Upsert
-import com.qosquo.wallet.model.Transaction
-import com.qosquo.wallet.model.TransactionAccount
-import com.qosquo.wallet.model.TransactionCategory
-import com.qosquo.wallet.model.database.entities.TransactionsDbEntity
+import com.qosquo.wallet.data.db.entity.TransactionsDbEntity
+import com.qosquo.wallet.domain.Transaction
+import com.qosquo.wallet.domain.TransactionAccount
+import com.qosquo.wallet.domain.TransactionCategory
 import kotlinx.coroutines.flow.Flow
 
 @Dao

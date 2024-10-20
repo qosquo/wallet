@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,12 +20,19 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Tab
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,23 +45,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.Dependencies
-import com.qosquo.wallet.Event
-import com.qosquo.wallet.model.CategoryTypes
+import com.qosquo.wallet.R
+import com.qosquo.wallet.domain.CategoryTypes
+import com.qosquo.wallet.presentation.ui.categories.CategoriesAction
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CategoriesSelection(
-    onTabChange: (Event.CategoriesEvent.SetType) -> Unit,
-    onSelect: (selection: Long) -> Unit
+    onTabChange: (CategoriesAction.SetType) -> Unit,
+    onSelect: (selection: Long?) -> Unit
 ) {
     val state by Dependencies.categoriesViewModel.state.collectAsStateWithLifecycle()
 
@@ -66,19 +75,41 @@ fun CategoriesSelection(
     }
 
     Scaffold(
-    ) {
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(id = R.string.categories_list))
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        onSelect(null)
+                    }) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "back button"
+                        )
+                    }
+                }
+            )
+        },
+        contentWindowInsets = ScaffoldDefaults
+            .contentWindowInsets
+            .exclude(NavigationBarDefaults.windowInsets)
+    ) { innerPadding ->
         var selectedTabIndex by remember {
             mutableIntStateOf(0)
         }
 
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
             val scope = rememberCoroutineScope()
 
             LaunchedEffect(pagerState.currentPage) {
                 selectedTabIndex = pagerState.currentPage
-                onTabChange(Event.CategoriesEvent.SetType(
+                onTabChange(CategoriesAction.SetType(
                     CategoryTypes.entries[pagerState.currentPage]
                 ))
             }
@@ -94,7 +125,7 @@ fun CategoriesSelection(
                                 pagerState.animateScrollToPage(index)
                             }
                             selectedTabIndex = index
-                            onTabChange(Event.CategoriesEvent.SetType(
+                            onTabChange(CategoriesAction.SetType(
                                 CategoryTypes.entries[pagerState.currentPage]
                             ))
                         }
@@ -118,19 +149,11 @@ fun CategoriesSelection(
                         state.incomeCategories
                     }
                     items(categories) { category ->
-                        Card(
-                            modifier = Modifier
-                                .padding(vertical = 4.dp)
-                                .clickable {
-                                    onSelect(category.id)
-                                }
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                        ListItem(
+                            headlineContent = {
+                                Text(text = category.name)
+                            },
+                            leadingContent = {
                                 Box(modifier = Modifier
                                     .size(32.dp)
                                     .clip(CircleShape)
@@ -146,14 +169,13 @@ fun CategoriesSelection(
                                             .padding(4.dp)
                                     )
                                 }
-                                Text(
-                                    text = category.name,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(horizontal = 8.dp)
-                                )
-                            }
-                        }
+                            },
+                            modifier = Modifier
+                                .clickable {
+                                    onSelect(category.id)
+                                }
+                        )
+                        HorizontalDivider()
                     }
                 }
             }

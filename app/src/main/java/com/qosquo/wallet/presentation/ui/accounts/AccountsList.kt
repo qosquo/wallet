@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.NavigationBarDefaults
@@ -41,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.Dependencies
 import com.qosquo.wallet.R
 import com.qosquo.wallet.domain.Currencies
+import com.qosquo.wallet.utils.amountToStringWithCurrency
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +82,6 @@ fun AccountsList(
                         Text(text = account.name)
                     },
                     leadingContent = {
-
                         Box(modifier = Modifier
                             .size(32.dp)
                             .clip(CircleShape)
@@ -111,6 +112,7 @@ fun AccountsList(
                             onNavigate(account.id)
                         }
                 )
+                HorizontalDivider()
             }
         }
     }

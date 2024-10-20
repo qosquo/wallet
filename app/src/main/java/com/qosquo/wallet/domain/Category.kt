@@ -2,7 +2,7 @@ package com.qosquo.wallet.domain
 
 import androidx.annotation.DrawableRes
 
-enum class CategoryTypes() {
+enum class CategoryTypes {
     EXPENSES,
     INCOME,
     TRANSFER

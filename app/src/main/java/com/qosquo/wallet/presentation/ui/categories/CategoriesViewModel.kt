@@ -77,7 +77,7 @@ class CategoriesViewModel(
                 _state.update { it.copy(name = action.newName) }
             }
             is CategoriesAction.SetType -> {
-                _state.update { it.copy(type = action.newType.id) }
+                _state.update { it.copy(type = action.newType.ordinal) }
             }
             is CategoriesAction.SetCategoryById -> {
                 if (action.categoryId != null) {

@@ -2,13 +2,12 @@ package com.qosquo.wallet
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.qosquo.wallet.data.db.database.AppDatabase
 import com.qosquo.wallet.data.db.migration.MIGRATION_6_7
 import com.qosquo.wallet.data.db.migration.MIGRATION_7_8
 import com.qosquo.wallet.presentation.ui.accounts.AccountsViewModel
 import com.qosquo.wallet.presentation.ui.categories.CategoriesViewModel
+import com.qosquo.wallet.presentation.ui.operations.TransactionViewModel
 
 object Dependencies {
 

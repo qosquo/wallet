@@ -1,6 +1,6 @@
-package com.qosquo.wallet
+package com.qosquo.wallet.utils
 
-import com.qosquo.wallet.model.Currencies
+import com.qosquo.wallet.domain.Currencies
 import kotlin.math.abs
 
 fun amountToStringWithCurrency(amount: Float, currency: Currencies): String {

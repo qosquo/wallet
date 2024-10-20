@@ -40,7 +40,12 @@ import com.qosquo.wallet.presentation.ui.accounts.AccountsForm
 import com.qosquo.wallet.presentation.ui.accounts.AccountsList
 import com.qosquo.wallet.presentation.ui.categories.CategoriesForm
 import com.qosquo.wallet.presentation.ui.categories.CategoriesList
+import com.qosquo.wallet.presentation.ui.operations.OperationsList
 import com.qosquo.wallet.presentation.ui.theme.WalletTheme
+import com.qosquo.wallet.ui.screens.operations.AccountsSelection
+import com.qosquo.wallet.ui.screens.operations.CategoriesSelection
+import com.qosquo.wallet.ui.screens.operations.OperationsForm
+import com.qosquo.wallet.ui.screens.operations.OperationsNavigateCode
 import com.qosquo.wallet.utils.fromRoute
 
 class MainActivity : ComponentActivity() {
@@ -54,6 +59,12 @@ class MainActivity : ComponentActivity() {
             WalletTheme {
                 val navController: NavHostController = rememberNavController()
                 val navItems = listOf(
+                    TopLevelRoute(
+                        title = "Operations",
+                        selectedIcon = ImageVector.vectorResource(id = R.drawable.home_3_fill),
+                        unselectedIcon = ImageVector.vectorResource(id = R.drawable.home_3_line),
+                        route = Routes.Operations,
+                    ),
                     TopLevelRoute(
                         title = "Accounts",
                         selectedIcon = ImageVector.vectorResource(id = R.drawable.bank_fill),
@@ -81,13 +92,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = Routes.Accounts,
+                        startDestination = Routes.Operations,
                         modifier = Modifier.weight(1f)
                     ) {
-                        navigation<Routes.Accounts> (
-                            startDestination = Screens.Accounts.List,
+                        navigation<Routes.Operations> (
+                            startDestination = Screens.Operations.List,
                         ) {
-                            composable<Screens.Accounts.List>(
+                            composable<Screens.Operations.List>(
                                 enterTransition = {
                                     slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
                                 },
@@ -99,6 +110,138 @@ class MainActivity : ComponentActivity() {
                                 },
                                 popExitTransition = {
                                     slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                }
+                            ) {
+                                OperationsList(
+                                    navigate = { transactionId, accountId, categoryId ->
+                                        navController.navigate(Screens.Operations.Form(transactionId = transactionId))
+                                        navController.currentBackStackEntry
+                                            ?.savedStateHandle
+                                            ?.set("selectedAccountId", accountId)
+                                        navController.currentBackStackEntry
+                                            ?.savedStateHandle
+                                            ?.set("selectedCategoryId", categoryId)
+                                    }
+                                )
+                            }
+
+                            composable<Screens.Operations.Form>(
+                                enterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                },
+                                popEnterTransition = {
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                },
+                                popExitTransition = {
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                }
+                            ) {
+                                val id: Long? = it.toRoute<Screens.Operations.Form>().transactionId
+                                OperationsForm(
+                                    transactionId = id,
+                                    accountId = it.savedStateHandle["selectedAccountId"],
+                                    categoryId = it.savedStateHandle["selectedCategoryId"],
+                                    onAction = Dependencies.transactionsViewModel::onAction,
+                                    navigate = { code ->
+                                        when (code) {
+                                            OperationsNavigateCode.BACK -> {
+                                                navController.navigateUp()
+                                                navController.currentBackStackEntry
+                                                    ?.savedStateHandle
+                                                    ?.set("selectedAccountId", null)
+                                                navController.currentBackStackEntry
+                                                    ?.savedStateHandle
+                                                    ?.set("selectedCategoryId", null)
+                                            }
+                                            OperationsNavigateCode.ACCOUNT -> {
+                                                navController.navigate(Screens.Operations.AccountSelection)
+                                            }
+                                            OperationsNavigateCode.CATEGORY -> {
+                                                navController.navigate(Screens.Operations.CategorySelection)
+                                            }
+                                        }
+                                    }
+                                )
+                            }
+
+                            composable<Screens.Operations.AccountSelection> {
+                                AccountsSelection(
+                                    onSelect = { accountId ->
+                                        navController.navigateUp()
+                                        if (accountId != null) {
+                                            navController.currentBackStackEntry
+                                                ?.savedStateHandle
+                                                ?.set("selectedAccountId", accountId)
+                                        }
+                                    }
+                                )
+                            }
+
+                            composable<Screens.Operations.CategorySelection> {
+                                CategoriesSelection(
+                                    onTabChange = Dependencies.categoriesViewModel::onAction,
+                                    onSelect = { categoryId ->
+                                        navController.navigateUp()
+                                        if (categoryId != null) {
+                                            navController.currentBackStackEntry
+                                                ?.savedStateHandle
+                                                ?.set("selectedCategoryId", categoryId)
+                                        }
+                                    }
+                                )
+                            }
+                        }
+
+                        navigation<Routes.Accounts> (
+                            startDestination = Screens.Accounts.List,
+                        ) {
+                            composable<Screens.Accounts.List>(
+                                enterTransition = {
+                                    when (initialState.fromRoute()) {
+                                        Screens.Operations.List::class.qualifiedName ->
+                                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                        Screens.Categories.List::class.qualifiedName ->
+                                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                        Screens.Accounts.Form::class.qualifiedName ->
+                                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                        else -> null
+                                    }
+                                },
+                                exitTransition = {
+                                    when (targetState.fromRoute()) {
+                                        Screens.Operations.List::class.qualifiedName ->
+                                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                        Screens.Categories.List::class.qualifiedName ->
+                                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                        Screens.Accounts.Form::class.qualifiedName ->
+                                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                        else -> null
+                                    }
+                                },
+                                popEnterTransition = {
+                                    when (initialState.fromRoute()) {
+                                        Screens.Operations.List::class.qualifiedName ->
+                                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                        Screens.Categories.List::class.qualifiedName ->
+                                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                        Screens.Accounts.Form::class.qualifiedName ->
+                                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                        else -> null
+                                    }
+                                },
+                                popExitTransition = {
+                                    when (targetState.fromRoute()) {
+                                        Screens.Operations.List::class.qualifiedName ->
+                                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                                        Screens.Categories.List::class.qualifiedName ->
+                                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                        Screens.Accounts.Form::class.qualifiedName ->
+                                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                                        else -> null
+                                    }
                                 }
                             ) {
                                 AccountsList(
@@ -119,11 +262,7 @@ class MainActivity : ComponentActivity() {
                                     slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
                                 },
                                 popEnterTransition = {
-                                    when (initialState.fromRoute()) {
-                                        Screens.Accounts.Form::class.qualifiedName ->
-                                           slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
-                                        else -> null
-                                    }
+                                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
                                 },
                                 popExitTransition = {
                                     slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
@@ -154,11 +293,7 @@ class MainActivity : ComponentActivity() {
                                     slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
                                 },
                                 popExitTransition = {
-                                    when (targetState.fromRoute()) {
-                                        Screens.Accounts.List::class.qualifiedName ->
-                                            slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
-                                        else -> null
-                                    }
+                                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
                                 }
                             ) {
                                 CategoriesList(

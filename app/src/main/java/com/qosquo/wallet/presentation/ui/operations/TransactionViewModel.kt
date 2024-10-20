@@ -1,16 +1,11 @@
-package com.qosquo.wallet.viewmodel
+package com.qosquo.wallet.presentation.ui.operations
 
-import com.qosquo.wallet.Event
-import com.qosquo.wallet.model.CategoryTypes
-import com.qosquo.wallet.model.Currencies
-import com.qosquo.wallet.model.database.TransactionsDao
-import com.qosquo.wallet.model.database.entities.TransactionsDbEntity
-import com.qosquo.wallet.ui.Colors
-import com.qosquo.wallet.ui.Icons
-import com.qosquo.wallet.viewmodel.states.CategoriesState
-import com.qosquo.wallet.viewmodel.states.TransactionAccountState
-import com.qosquo.wallet.viewmodel.states.TransactionCategoryState
-import com.qosquo.wallet.viewmodel.states.TransactionState
+import com.qosquo.wallet.data.db.dao.TransactionsDao
+import com.qosquo.wallet.data.db.entity.TransactionsDbEntity
+import com.qosquo.wallet.domain.CategoryTypes
+import com.qosquo.wallet.domain.Colors
+import com.qosquo.wallet.domain.Currencies
+import com.qosquo.wallet.domain.Icons
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -39,9 +34,9 @@ class TransactionViewModel(
 
     private var initialState: TransactionState = TransactionState()
 
-    fun onEvent(event: Event.TransactionsEvent) {
-        when (event) {
-            Event.TransactionsEvent.SaveTransaction -> {
+    fun onAction(action: OperationsAction) {
+        when (action) {
+            OperationsAction.SaveTransaction -> {
                 val id = _state.value.id
                 val amount = _state.value.amount.toFloatOrNull() ?: 0F
                 val accountId = _state.value.accountId
@@ -78,10 +73,10 @@ class TransactionViewModel(
                     )
                 }
             }
-            is Event.TransactionsEvent.SetAccountId -> {
-                if (event.newAccountId != null) {
-                    _state.update { it.copy(accountId = event.newAccountId) }
-                    val account = dao.getAccountFromId(event.newAccountId)
+            is OperationsAction.SetAccountId -> {
+                if (action.newAccountId != null) {
+                    _state.update { it.copy(accountId = action.newAccountId) }
+                    val account = dao.getAccountFromId(action.newAccountId)
                     _accountState.update {
                         it.copy(
                             id = account.id,
@@ -103,13 +98,13 @@ class TransactionViewModel(
                     }
                 }
             }
-            is Event.TransactionsEvent.SetAmount -> {
-                _state.update { it.copy(amount = event.newAmount) }
+            is OperationsAction.SetAmount -> {
+                _state.update { it.copy(amount = action.newAmount) }
             }
-            is Event.TransactionsEvent.SetCategoryId -> {
-                if (event.newCategoryId != null) {
-                    _state.update { it.copy(categoryId = event.newCategoryId) }
-                    val category = dao.getCategoryFromId(event.newCategoryId)
+            is OperationsAction.SetCategoryId -> {
+                if (action.newCategoryId != null) {
+                    _state.update { it.copy(categoryId = action.newCategoryId) }
+                    val category = dao.getCategoryFromId(action.newCategoryId)
                     _categoryState.update {
                         it.copy(
                             id = category.id,
@@ -131,15 +126,15 @@ class TransactionViewModel(
                     }
                 }
             }
-            is Event.TransactionsEvent.SetDate -> {
-                _state.update { it.copy(date = event.newDate) }
+            is OperationsAction.SetDate -> {
+                _state.update { it.copy(date = action.newDate) }
             }
-            is Event.TransactionsEvent.SetNotes -> {
-                _state.update { it.copy(notes = event.newNotes) }
+            is OperationsAction.SetNotes -> {
+                _state.update { it.copy(notes = action.newNotes) }
             }
-            is Event.TransactionsEvent.SetTransactionById -> {
-                if (event.transactionId != null) {
-                    val transaction = dao.getTransactionFromId(event.transactionId)
+            is OperationsAction.SetTransactionById -> {
+                if (action.transactionId != null) {
+                    val transaction = dao.getTransactionFromId(action.transactionId)
                     this.initialState = TransactionState(
                         id = transaction.id,
                         transactionsPerDay = dao.getTransactionsPerDay(),

@@ -2,14 +2,13 @@
 
 package com.qosquo.wallet.ui.screens.operations
 
-import android.os.Parcelable
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.DatePicker
@@ -24,13 +24,17 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,25 +46,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.qosquo.wallet.CurrencyAmountInputVisualTransformation
 import com.qosquo.wallet.Dependencies
-import com.qosquo.wallet.Event
-import com.qosquo.wallet.model.CategoryTypes
-import com.qosquo.wallet.model.Currencies
-import com.qosquo.wallet.model.Transaction
-import com.qosquo.wallet.ui.Colors
-import com.qosquo.wallet.ui.Icons
-import kotlinx.parcelize.Parcelize
+import com.qosquo.wallet.R
+import com.qosquo.wallet.domain.CategoryTypes
+import com.qosquo.wallet.presentation.ui.operations.OperationsAction
+import com.qosquo.wallet.utils.CurrencyAmountInputVisualTransformation
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import kotlin.math.abs
 
 enum class OperationsNavigateCode {
     BACK,
@@ -73,24 +73,41 @@ fun OperationsForm(
     transactionId: Long?,
     accountId: Long?,
     categoryId: Long?,
-    onEvent: (Event.TransactionsEvent) -> Unit,
+    onAction: (OperationsAction) -> Unit,
     navigate: (code: OperationsNavigateCode) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by Dependencies.transactionsViewModel.state.collectAsStateWithLifecycle()
     val accountState by Dependencies.transactionsViewModel.accountState.collectAsStateWithLifecycle()
     val categoryState by Dependencies.transactionsViewModel.categoryState.collectAsStateWithLifecycle()
-    onEvent(Event.TransactionsEvent.SetTransactionById(transactionId))
-    onEvent(Event.TransactionsEvent.SetAccountId(accountId))
-    onEvent(Event.TransactionsEvent.SetCategoryId(categoryId))
+    onAction(OperationsAction.SetTransactionById(transactionId))
+    onAction(OperationsAction.SetAccountId(accountId))
+    onAction(OperationsAction.SetCategoryId(categoryId))
 
     val calendar = Calendar.getInstance()
     var showDatePicker by remember { mutableStateOf(false) }
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(id = R.string.operations_form))
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navigate(OperationsNavigateCode.BACK)
+                    }) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "back button"
+                        )
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                onEvent(Event.TransactionsEvent.SaveTransaction)
+                onAction(OperationsAction.SaveTransaction)
                 navigate(OperationsNavigateCode.BACK)
             }) {
                 Icon(
@@ -98,14 +115,17 @@ fun OperationsForm(
                     contentDescription = "add"
                 )
             }
-        }
-    ) { _ ->
+        },
+        contentWindowInsets = ScaffoldDefaults
+            .contentWindowInsets
+            .exclude(NavigationBarDefaults.windowInsets)
+    ) { innerPadding ->
         when {
             showDatePicker -> {
                 DatePickerModal(
                     onDateSelected = { unixtime ->
                         unixtime?.let {
-                            onEvent(Event.TransactionsEvent.SetDate(it))
+                            onAction(OperationsAction.SetDate(it))
                         }
                         showDatePicker = false
                     },
@@ -119,6 +139,7 @@ fun OperationsForm(
         Column(
             modifier = modifier
                 .fillMaxSize()
+                .padding(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
             Text(
@@ -149,7 +170,7 @@ fun OperationsForm(
                         } else {
                             it
                         }
-                        onEvent(Event.TransactionsEvent.SetAmount(value))
+                        onAction(OperationsAction.SetAmount(value))
                     },
                     visualTransformation = CurrencyAmountInputVisualTransformation(),
                     keyboardOptions = KeyboardOptions.Default.copy(
@@ -281,7 +302,7 @@ fun OperationsForm(
             OutlinedTextField(
                 value = state.notes,
                 onValueChange = {
-                    onEvent(Event.TransactionsEvent.SetNotes(it))
+                    onAction(OperationsAction.SetNotes(it))
                 },
                 placeholder = {
                     Text(text = "Add a note")

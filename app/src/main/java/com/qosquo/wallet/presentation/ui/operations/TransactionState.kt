@@ -1,11 +1,11 @@
-package com.qosquo.wallet.viewmodel.states
+package com.qosquo.wallet.presentation.ui.operations
 
 import androidx.annotation.DrawableRes
-import com.qosquo.wallet.model.CategoryTypes
-import com.qosquo.wallet.model.Currencies
-import com.qosquo.wallet.model.Transaction
-import com.qosquo.wallet.ui.Colors
-import com.qosquo.wallet.ui.Icons
+import com.qosquo.wallet.domain.CategoryTypes
+import com.qosquo.wallet.domain.Colors
+import com.qosquo.wallet.domain.Currencies
+import com.qosquo.wallet.domain.Icons
+import com.qosquo.wallet.domain.Transaction
 
 data class TransactionState(
     val id: Long = 0,
