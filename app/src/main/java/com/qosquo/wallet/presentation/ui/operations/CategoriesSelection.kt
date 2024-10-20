@@ -27,6 +27,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
@@ -163,7 +164,7 @@ fun CategoriesSelection(
                                             id = category.iconId
                                         ),
                                         contentDescription = "account icon",
-                                        tint = Color.Black,
+                                        tint = MaterialTheme.colorScheme.onSurface,
                                         modifier = Modifier
                                             .size(32.dp)
                                             .padding(4.dp)

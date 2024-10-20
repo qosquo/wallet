@@ -156,7 +156,7 @@ fun CategoriesForm(
                             tint = if (isSelected) {
                                 Color(state.colorHex.toColorInt())
                             } else {
-                                Color.Black
+                                MaterialTheme.colorScheme.onSurface
                             },
                             modifier = Modifier.size(36.dp)
                         )

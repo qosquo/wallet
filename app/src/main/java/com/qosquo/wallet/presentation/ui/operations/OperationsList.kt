@@ -149,7 +149,7 @@ fun OperationsList(
                                                 id = item.categoryIconId
                                             ),
                                             contentDescription = "bus",
-                                            tint = Color.White,
+                                            tint = MaterialTheme.colorScheme.onSurface,
                                             modifier = modifier
                                                 .fillMaxSize()
                                                 .padding(4.dp)
