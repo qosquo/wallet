@@ -338,10 +338,11 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 CategoriesList(
                                     onTabChange = categoriesViewModel::onAction,
-                                    onNavigate = { id ->
+                                    onNavigate = { id, typeId ->
                                         navController.navigate(
                                             Screens.Categories.Form(
-                                                categoryId = id
+                                                categoryId = id,
+                                                typeId = typeId
                                             ))
                                     }
                                 )
@@ -362,8 +363,10 @@ class MainActivity : ComponentActivity() {
                                 }
                             ) {
                                 val id: Long? = it.toRoute<Screens.Categories.Form>().categoryId
+                                val typeId: Int = it.toRoute<Screens.Categories.Form>().typeId
                                 CategoriesForm(
                                     categoryId = id,
+                                    typeId = typeId,
                                     onEvent = categoriesViewModel::onAction,
                                     onNavigate = {
                                         navController.navigateUp()

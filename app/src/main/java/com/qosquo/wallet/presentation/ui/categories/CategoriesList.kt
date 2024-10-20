@@ -60,7 +60,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CategoriesList(
     onTabChange: (CategoriesAction.SetType) -> Unit,
-    onNavigate: (id: Long?) -> Unit
+    onNavigate: (id: Long?, typeId: Int) -> Unit
 ) {
     val state by Dependencies.categoriesViewModel.state.collectAsStateWithLifecycle()
 
@@ -70,6 +70,9 @@ fun CategoriesList(
     )
     val pagerState = rememberPagerState {
         tabRows.size
+    }
+    var selectedTabIndex by remember {
+        mutableIntStateOf(0)
     }
 
     Scaffold(
@@ -82,7 +85,7 @@ fun CategoriesList(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                onNavigate(null)
+                onNavigate(null, selectedTabIndex)
             }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "add")
             }
@@ -91,10 +94,6 @@ fun CategoriesList(
             .contentWindowInsets
             .exclude(NavigationBarDefaults.windowInsets)
     ) { innerPadding ->
-        var selectedTabIndex by remember {
-            mutableIntStateOf(0)
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -167,7 +166,7 @@ fun CategoriesList(
                             },
                             modifier = Modifier
                                 .clickable {
-                                    onNavigate(category.id)
+                                    onNavigate(category.id, selectedTabIndex)
                                 }
                         )
                         HorizontalDivider()

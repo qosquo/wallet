@@ -27,6 +27,6 @@ sealed interface Screens {
         @Serializable
         object List
         @Serializable
-        data class Form(val categoryId: Long?)
+        data class Form(val categoryId: Long?, val typeId: Int)
     }
 }

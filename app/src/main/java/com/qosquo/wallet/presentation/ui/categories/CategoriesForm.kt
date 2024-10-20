@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.utils.CurrencyAmountInputVisualTransformation
 import com.qosquo.wallet.Dependencies
 import com.qosquo.wallet.R
+import com.qosquo.wallet.domain.CategoryTypes
 import com.qosquo.wallet.domain.Currencies
 import com.qosquo.wallet.domain.Colors
 import com.qosquo.wallet.domain.Icons
@@ -49,18 +50,25 @@ import com.qosquo.wallet.presentation.ui.accounts.SelectableColor
 @Composable
 fun CategoriesForm(
     categoryId: Long?,
+    typeId: Int,
     onEvent: (CategoriesAction) -> Unit,
     onNavigate: () -> Unit
 ) {
 
     val state by Dependencies.categoriesViewModel.state.collectAsStateWithLifecycle()
     onEvent(CategoriesAction.SetCategoryById(categoryId))
+    onEvent(CategoriesAction.SetType(CategoryTypes.entries[typeId]))
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(id = R.string.categories_form))
+                    val text = if (typeId == 0) {
+                        stringResource(R.string.categories_form_expense)
+                    } else {
+                        stringResource(R.string.categories_form_income)
+                    }
+                    Text(text)
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigate) {

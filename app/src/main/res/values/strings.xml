@@ -6,6 +6,8 @@
 
     <string name="categories_list">Categories</string>
     <string name="categories_form">Edit category</string>
+    <string name="categories_form_expense">Edit expense category</string>
+    <string name="categories_form_income">Edit income category</string>
     <string name="operations_list">Operations</string>
     <string name="operations_form">Edit transaction</string>
 </resources>
