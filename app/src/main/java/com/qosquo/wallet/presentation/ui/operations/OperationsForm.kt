@@ -32,6 +32,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -57,6 +58,7 @@ import com.qosquo.wallet.R
 import com.qosquo.wallet.domain.CategoryTypes
 import com.qosquo.wallet.presentation.ui.operations.OperationsAction
 import com.qosquo.wallet.utils.CurrencyAmountInputVisualTransformation
+import com.qosquo.wallet.utils.PastOrPresentSelectableDates
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -318,7 +320,9 @@ fun DatePickerModal(
     onDateSelected: (Long?) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState()
+    val datePickerState = rememberDatePickerState(
+        selectableDates = PastOrPresentSelectableDates
+    )
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
