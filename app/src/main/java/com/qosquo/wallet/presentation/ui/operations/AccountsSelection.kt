@@ -26,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -50,12 +52,14 @@ fun AccountsSelection(
     modifier: Modifier = Modifier
 ) {
     val state by Dependencies.accountsViewModel.state.collectAsStateWithLifecycle()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(stringResource(id = R.string.accounts_list))
                 },
+                scrollBehavior = scrollBehavior,
                 navigationIcon = {
                     IconButton(onClick = {
                         onSelect(null)
@@ -70,7 +74,9 @@ fun AccountsSelection(
         },
         contentWindowInsets = ScaffoldDefaults
             .contentWindowInsets
-            .exclude(NavigationBarDefaults.windowInsets)
+            .exclude(NavigationBarDefaults.windowInsets),
+        modifier = modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
@@ -106,7 +112,10 @@ fun AccountsSelection(
                             amount = account.balance,
                             currency = currency
                         )
-                        Text(text = balanceText)
+                        Text(
+                            text = balanceText,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     },
                     modifier = modifier
                         .padding(vertical = 4.dp)

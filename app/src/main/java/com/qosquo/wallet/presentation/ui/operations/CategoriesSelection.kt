@@ -34,6 +34,7 @@ import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -61,7 +63,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun CategoriesSelection(
     onTabChange: (CategoriesAction.SetType) -> Unit,
-    onSelect: (selection: Long?) -> Unit
+    onSelect: (selection: Long?) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val state by Dependencies.categoriesViewModel.state.collectAsStateWithLifecycle()
 
@@ -73,12 +76,14 @@ fun CategoriesSelection(
         tabRows.size
     }
 
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(stringResource(id = R.string.categories_list))
                 },
+                scrollBehavior = scrollBehavior,
                 navigationIcon = {
                     IconButton(onClick = {
                         onSelect(null)
@@ -93,7 +98,9 @@ fun CategoriesSelection(
         },
         contentWindowInsets = ScaffoldDefaults
             .contentWindowInsets
-            .exclude(NavigationBarDefaults.windowInsets)
+            .exclude(NavigationBarDefaults.windowInsets),
+        modifier = modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         var selectedTabIndex by remember {
             mutableIntStateOf(0)
