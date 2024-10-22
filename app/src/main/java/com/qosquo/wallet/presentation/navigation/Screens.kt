@@ -1,6 +1,5 @@
 package com.qosquo.wallet.presentation.navigation
 
-import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.serialization.Serializable
 
 sealed interface Screens {
@@ -27,6 +26,6 @@ sealed interface Screens {
         @Serializable
         object List
         @Serializable
-        data class Form(val categoryId: Long?, val typeId: Int)
+        data class Form(val categoryId: Long?, val type: Int)
     }
 }

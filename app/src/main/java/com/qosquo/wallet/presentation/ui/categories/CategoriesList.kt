@@ -52,7 +52,6 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.Dependencies
 import com.qosquo.wallet.R
-import com.qosquo.wallet.domain.CategoryTypes
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,9 +102,7 @@ fun CategoriesList(
 
             LaunchedEffect(pagerState.currentPage) {
                 selectedTabIndex = pagerState.currentPage
-                onTabChange(CategoriesAction.SetType(
-                    CategoryTypes.entries[pagerState.currentPage]
-                ))
+                onTabChange(CategoriesAction.SetType(pagerState.currentPage))
             }
             TabRow(selectedTabIndex = selectedTabIndex) {
                 tabRows.forEachIndexed {index, text ->
@@ -119,9 +116,7 @@ fun CategoriesList(
                                 pagerState.animateScrollToPage(index)
                             }
                             selectedTabIndex = index
-                            onTabChange(CategoriesAction.SetType(
-                                CategoryTypes.entries[pagerState.currentPage]
-                            ))
+                            onTabChange(CategoriesAction.SetType(pagerState.currentPage))
                         }
                     )
                 }

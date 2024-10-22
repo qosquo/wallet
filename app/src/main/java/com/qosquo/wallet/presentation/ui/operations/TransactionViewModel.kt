@@ -2,7 +2,6 @@ package com.qosquo.wallet.presentation.ui.operations
 
 import com.qosquo.wallet.data.db.dao.TransactionsDao
 import com.qosquo.wallet.data.db.entity.TransactionsDbEntity
-import com.qosquo.wallet.domain.CategoryTypes
 import com.qosquo.wallet.domain.Colors
 import com.qosquo.wallet.domain.Currencies
 import com.qosquo.wallet.domain.Icons
@@ -122,7 +121,7 @@ class TransactionViewModel(
                         it.copy(
                             id = category.id,
                             name = category.name,
-                            type = CategoryTypes.entries[category.typeId],
+                            type = category.type,
                             colorHex = category.colorHex,
                             iconId = category.iconId
                         )
@@ -132,7 +131,7 @@ class TransactionViewModel(
                         it.copy(
                             id = 0,
                             name = "",
-                            type = CategoryTypes.EXPENSES,
+                            type = 0,
                             colorHex = Colors.GRAY.hex,
                             iconId = Icons.Categories.UNKNOWN.id
                         )

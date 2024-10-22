@@ -1,7 +1,6 @@
 package com.qosquo.wallet.presentation.ui.operations
 
 import androidx.annotation.DrawableRes
-import com.qosquo.wallet.domain.CategoryTypes
 import com.qosquo.wallet.domain.Colors
 import com.qosquo.wallet.domain.Currencies
 import com.qosquo.wallet.domain.Icons
@@ -28,7 +27,7 @@ data class TransactionAccountState(
 data class TransactionCategoryState(
     val id: Long = 0,
     val name: String = "",
-    val type: CategoryTypes = CategoryTypes.EXPENSES,
+    val type: Int = 0,
     val colorHex: String = Colors.GRAY.hex,
     @DrawableRes val iconId: Int = Icons.Categories.UNKNOWN.id
 )

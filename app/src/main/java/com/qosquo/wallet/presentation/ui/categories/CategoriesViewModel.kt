@@ -1,6 +1,5 @@
 package com.qosquo.wallet.presentation.ui.categories
 
-import com.qosquo.wallet.domain.CategoryTypes
 import com.qosquo.wallet.data.db.dao.CategoriesDao
 import com.qosquo.wallet.data.db.entity.CategoriesDbEntity
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,7 +56,7 @@ class CategoriesViewModel(
                         expensesCategories = updatedExpenses,
                         incomeCategories = updatedIncome,
                         name = "",
-                        type = CategoryTypes.EXPENSES.ordinal,
+                        type = 0,
                         goal = "",
                         iconId = 0,
                         colorHex = "",
@@ -77,7 +76,7 @@ class CategoriesViewModel(
                 _state.update { it.copy(name = action.newName) }
             }
             is CategoriesAction.SetType -> {
-                _state.update { it.copy(type = action.newType.ordinal) }
+                _state.update { it.copy(type = action.newType) }
             }
             is CategoriesAction.SetCategoryById -> {
                 if (action.categoryId != null) {

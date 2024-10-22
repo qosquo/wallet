@@ -55,7 +55,6 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.Dependencies
 import com.qosquo.wallet.R
-import com.qosquo.wallet.domain.CategoryTypes
 import com.qosquo.wallet.presentation.ui.operations.OperationsAction
 import com.qosquo.wallet.utils.CurrencyAmountInputVisualTransformation
 import com.qosquo.wallet.utils.PastOrPresentSelectableDates
@@ -154,10 +153,13 @@ fun OperationsForm(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
-                val sign = if (categoryState.type == CategoryTypes.EXPENSES) {
+                val sign = if (categoryState.type == 0) {
                     "-"
-                } else {
+                } else if (categoryState.type == 1){
                     "+"
+                } else {
+                    "?"
+                    // TODO: ADD EXCEPTION
                 }
                 Text(
                     text = sign,

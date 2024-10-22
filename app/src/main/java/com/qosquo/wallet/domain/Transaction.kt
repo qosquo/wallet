@@ -1,9 +1,7 @@
 package com.qosquo.wallet.domain
 
-import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.room.ColumnInfo
-import kotlinx.parcelize.Parcelize
 
 data class Transaction(
     val id: Long,
@@ -15,7 +13,7 @@ data class Transaction(
     @ColumnInfo(name = "account_currency") val accountCurrency: Int,
     @ColumnInfo(name = "category_id") val categoryId: Long,
     @ColumnInfo(name = "category_name") val categoryName: String,
-    @ColumnInfo(name = "category_type_id") val categoryTypeId: Int,
+    @ColumnInfo(name = "category_type") val categoryTypeId: Int,
     @ColumnInfo(name = "category_icon_id") @DrawableRes val categoryIconId: Int,
     @ColumnInfo(name = "category_color_hex") val categoryColorHex: String,
     val date: Long,
@@ -33,7 +31,7 @@ data class TransactionAccount(
 data class TransactionCategory(
     val id: Long,
     val name: String,
-    @ColumnInfo(name = "type_id") val typeId: Int,
+    @ColumnInfo(name = "type") val type: Int,
     @ColumnInfo(name = "color_hex") val colorHex: String,
     @ColumnInfo(name = "icon_id") @DrawableRes val iconId: Int
 )

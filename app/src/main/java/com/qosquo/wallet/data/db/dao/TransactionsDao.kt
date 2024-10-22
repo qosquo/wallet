@@ -22,7 +22,7 @@ interface TransactionsDao {
             "account_icon_id, accounts.color_hex AS account_color_hex, " +
             "accounts.currency AS account_currency, " +
             "categories.id AS category_id, category_name, " +
-            "categories.type AS category_type_id, category_icon_id, " +
+            "categories.type AS category_type, category_icon_id, " +
             "categories.color_hex AS category_color_hex, " +
             "transactions.date, transactions.notes FROM transactions " +
             "INNER JOIN accounts ON transactions.account_id = accounts.id " +
@@ -40,7 +40,7 @@ interface TransactionsDao {
 
     @Query("""
         SELECT categories.id, categories.category_name AS name,
-        categories.type AS type_id, categories.color_hex, categories.category_icon_id AS icon_id
+        categories.type AS type, categories.color_hex, categories.category_icon_id AS icon_id
         FROM categories 
         WHERE categories.id = :categoryId LIMIT 1
     """)
@@ -66,7 +66,7 @@ interface TransactionsDao {
             "account_icon_id, accounts.color_hex AS account_color_hex, " +
             "accounts.currency AS account_currency, " +
             "categories.id AS category_id, category_name, " +
-            "categories.type AS category_type_id, category_icon_id, " +
+            "categories.type AS category_type, category_icon_id, " +
             "categories.color_hex AS category_color_hex, " +
             "transactions.date, transactions.notes FROM transactions " +
             "INNER JOIN accounts ON transactions.account_id = accounts.id " +
