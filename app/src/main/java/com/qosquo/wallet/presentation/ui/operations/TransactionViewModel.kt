@@ -145,6 +145,11 @@ class TransactionViewModel(
                         notes = transaction.notes
                     )
                 } else {
+                    if (_state.value.accountId > -1
+                        || _state.value.categoryId > -1
+                        || _state.value.date > -1) {
+                        return
+                    }
                     val calendar = Calendar.getInstance()
                     val millis = calendar.timeInMillis
                     val seconds = (millis / 1000).toInt()
