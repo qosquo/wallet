@@ -81,7 +81,7 @@ class TransactionViewModel(
                         amount = "",
                         accountId = -1,
                         categoryId = -1,
-                        date = 0,
+                        date = -1,
                         notes = ""
                     )
                 }

@@ -125,6 +125,7 @@ fun OperationsForm(
         when {
             showDatePicker -> {
                 DatePickerModal(
+                    initialSelectedDateMillis = state.date,
                     onDateSelected = { unixtime ->
                         unixtime?.let {
                             onAction(OperationsAction.SetDate(it))
@@ -317,10 +318,12 @@ fun OperationsForm(
 
 @Composable
 fun DatePickerModal(
+    initialSelectedDateMillis: Long?,
     onDateSelected: (Long?) -> Unit,
     onDismiss: () -> Unit
 ) {
     val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialSelectedDateMillis,
         selectableDates = PastOrPresentSelectableDates
     )
 
