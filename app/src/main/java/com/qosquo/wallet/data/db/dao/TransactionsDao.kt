@@ -46,6 +46,21 @@ interface TransactionsDao {
     """)
     fun getCategoryFromId(categoryId: Long) : TransactionCategory
 
+    @Query("""
+        SELECT accounts.balance FROM accounts WHERE accounts.id=:accountId;
+    """)
+    fun getAccountBalance(accountId: Long) : Float
+
+    @Query("""
+        SELECT categories.type FROM categories WHERE categories.id=:categoryId;
+    """)
+    fun getCategoryTypeId(categoryId: Long) : Int
+
+    @Query("""
+        UPDATE accounts SET balance=:newBalance WHERE id=:accountId;
+        """)
+    fun updateAccountBalance(newBalance: Float, accountId: Long)
+
     @Query("SELECT transactions.id, transactions.amount, " +
             "accounts.id AS account_id, account_name, account_icon_id, " +
             "account_icon_id, accounts.color_hex AS account_color_hex, " +

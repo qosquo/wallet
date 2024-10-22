@@ -38,7 +38,7 @@ class TransactionViewModel(
         when (action) {
             OperationsAction.SaveTransaction -> {
                 val id = _state.value.id
-                val amount = _state.value.amount.toFloatOrNull() ?: 0F
+                val amount = _state.value.amount.toFloatOrNull()?.div(100) ?: 0F
                 val accountId = _state.value.accountId
                 val categoryId = _state.value.categoryId
                 val date = _state.value.date
@@ -49,9 +49,22 @@ class TransactionViewModel(
                     return
                 }
 
+                var accountBalance = dao.getAccountBalance(accountId)
+                val sign = if (dao.getCategoryTypeId(categoryId) == 0) {
+                    // expense
+                    -1
+                } else {
+                    // income
+                    1
+                }
+                accountBalance += this.initialState.amount.toFloatOrNull()?.div(100)?.times(-1 * sign)
+                    ?: 0F
+                accountBalance += sign * amount
+                dao.updateAccountBalance(accountBalance, accountId)
+
                 val newTransaction = TransactionsDbEntity(
                     id = id,
-                    amount = amount.div(100),
+                    amount = amount,
                     accountId = accountId,
                     categoryId = categoryId,
                     date = date,
