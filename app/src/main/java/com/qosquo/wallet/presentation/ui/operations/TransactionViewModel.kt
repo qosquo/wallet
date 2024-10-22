@@ -5,6 +5,7 @@ import com.qosquo.wallet.data.db.entity.TransactionsDbEntity
 import com.qosquo.wallet.domain.Colors
 import com.qosquo.wallet.domain.Currencies
 import com.qosquo.wallet.domain.Icons
+import com.qosquo.wallet.utils.signedValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -36,6 +37,7 @@ class TransactionViewModel(
     fun onAction(action: OperationsAction) {
         when (action) {
             OperationsAction.SaveTransaction -> {
+                // set transaction values from state
                 val id = _state.value.id
                 val amount = _state.value.amount.toFloatOrNull()?.div(100) ?: 0F
                 val accountId = _state.value.accountId
@@ -43,23 +45,34 @@ class TransactionViewModel(
                 val date = _state.value.date
                 val notes = _state.value.notes
 
-                if (abs(amount) < 0.001f || accountId == 0L || categoryId == 0L
-                    || date <= 0) {
+                // check if values are correct
+                // if not return from function (TODO: THROW EXCEPTION)
+                if (abs(amount) < 0.001f || accountId < 0L || categoryId < 0L) {
                     return
                 }
 
-                var accountBalance = dao.getAccountBalance(accountId)
-                val sign = if (dao.getCategoryTypeId(categoryId) == 0) {
-                    // expense
-                    -1
-                } else {
-                    // income
-                    1
+                if (initialState.accountId < 0) {
+                    var accountBalance = dao.getAccountBalance(accountId)
+                    val initialAmount = initialState.amount.toFloatOrNull()?.div(100) ?: 0F
+                    val categoryType = dao.getCategoryTypeId(categoryId)
+                    val signedInitialAmount = signedValue(categoryType, initialAmount)
+                    val signedAmount = signedValue(categoryType, amount)
+                    accountBalance -= signedInitialAmount
+                    accountBalance += signedAmount
+                    dao.updateAccountBalance(accountBalance, accountId)
+                } else if (initialState.accountId != accountId) {
+                    val categoryType = dao.getCategoryTypeId(categoryId)
+                    var fromAccountBalance = dao.getAccountBalance(initialState.accountId)
+                    var toAccountBalance = dao.getAccountBalance(accountId)
+                    val amount = this.initialState.amount.toFloatOrNull()?.div(100)
+                    amount?.let {
+                        val signedAmount = signedValue(categoryType, it)
+                        fromAccountBalance -= signedAmount
+                        toAccountBalance += signedAmount
+                        dao.updateAccountBalance(fromAccountBalance, initialState.accountId)
+                        dao.updateAccountBalance(toAccountBalance, accountId)
+                    }
                 }
-                accountBalance += this.initialState.amount.toFloatOrNull()?.div(100)?.times(-1 * sign)
-                    ?: 0F
-                accountBalance += sign * amount
-                dao.updateAccountBalance(accountBalance, accountId)
 
                 val newTransaction = TransactionsDbEntity(
                     id = id,
@@ -162,6 +175,7 @@ class TransactionViewModel(
                         || _state.value.date > -1) {
                         return
                     }
+                    // set current date to exact midnight in its local time zone
                     val calendar = Calendar.getInstance()
                     val millis = calendar.timeInMillis
                     val seconds = (millis / 1000).toInt()

@@ -15,3 +15,20 @@ fun amountToStringWithCurrency(amount: Float, currency: Currencies): String {
         "$sign${abs(amount).toInt()}${currency.symbol}"
     }
 }
+
+/**
+ * Return signed value based on category type.
+ * @property categoryType 0 - 'expense', 1 - 'income'
+ * @property amount amount which value must return signed
+ * @return Value is negative when category type is 'expense' and positive, when 'income'
+ */
+fun signedValue(categoryType: Int, amount: Float) : Float {
+    val sign = if (categoryType == 0) {
+        // expense
+        -1
+    } else {
+        // income
+        1
+    }
+    return amount * sign
+}
