@@ -145,9 +145,17 @@ class TransactionViewModel(
                         notes = transaction.notes
                     )
                 } else {
+                    val calendar = Calendar.getInstance()
+                    val millis = calendar.timeInMillis
+                    val seconds = (millis / 1000).toInt()
+                    val mod = seconds % 86400
+                    val midnight = seconds - mod
+                    val timezone = calendar.timeZone
+                    val offset = timezone.getOffset((midnight * 1000).toLong())
+                    val date = midnight.toLong() * 1000 + offset
                     this.initialState = TransactionState(
                         transactionsPerDay = dao.getTransactionsPerDay(),
-                        date = Calendar.getInstance().timeInMillis
+                        date = date.toLong()
                     )
                 }
 
