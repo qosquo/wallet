@@ -2,6 +2,7 @@ package com.qosquo.wallet.presentation.ui.operations
 
 sealed interface OperationsAction {
     data object SaveTransaction : OperationsAction
+    data object UpdateTransactions: OperationsAction
 
     data class SetAccountId(val newAccountId: Long?) : OperationsAction
     data class SetCategoryId(val newCategoryId: Long?) : OperationsAction

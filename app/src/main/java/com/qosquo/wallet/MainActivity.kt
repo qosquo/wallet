@@ -117,7 +117,8 @@ class MainActivity : ComponentActivity() {
                                         navController.currentBackStackEntry
                                             ?.savedStateHandle
                                             ?.set("selectedCategoryId", categoryId)
-                                    }
+                                    },
+                                    onAction = Dependencies.transactionsViewModel::onAction
                                 )
                             }
 

@@ -192,6 +192,12 @@ class TransactionViewModel(
 
                 _state.value = this.initialState
             }
+
+            OperationsAction.UpdateTransactions -> {
+                _state.update {
+                    it.copy(transactionsPerDay = dao.getTransactionsPerDay())
+                }
+            }
         }
     }
 }

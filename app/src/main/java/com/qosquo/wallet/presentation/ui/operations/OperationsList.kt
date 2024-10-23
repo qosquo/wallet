@@ -54,9 +54,11 @@ fun OperationsList(
         transactionAccountId: Long?,
         transactionCategoryId: Long?,
     ) -> Unit,
+    onAction: (OperationsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by Dependencies.transactionsViewModel.state.collectAsStateWithLifecycle()
+    onAction(OperationsAction.UpdateTransactions)
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
