@@ -2,6 +2,7 @@ package com.qosquo.wallet.presentation.ui.categories
 
 import com.qosquo.wallet.data.db.dao.CategoriesDao
 import com.qosquo.wallet.data.db.entity.CategoriesDbEntity
+import com.qosquo.wallet.domain.Category
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,6 +22,9 @@ class CategoriesViewModel(
     fun canExitForm(): Boolean {
         return initialState == _state.value
     }
+
+    val systemExpenseCategory: Category = dao.getSystemExpenseCategory()
+    val systemIncomeCategory: Category = dao.getSystemIncomeCategory()
 
     fun onAction(action: CategoriesAction) {
         when (action) {
@@ -99,6 +103,22 @@ class CategoriesViewModel(
                 }
 
                 _state.value = this.initialState
+            }
+
+            is CategoriesAction.DeleteCategoryById -> {
+                dao.updateTransactionsDeletedCategoryId(_state.value.type, action.categoryId)
+                dao.deleteCategoryDataById(action.categoryId)
+                _state.update {
+                    it.copy(
+                        expensesCategories = dao.getCategoriesOfType(0),
+                        incomeCategories = dao.getCategoriesOfType(1),
+                        name = "",
+                        type = 0,
+                        goal = "",
+                        iconId = 0,
+                        colorHex = "",
+                    )
+                }
             }
         }
     }

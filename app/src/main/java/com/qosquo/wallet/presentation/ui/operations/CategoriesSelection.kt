@@ -142,7 +142,7 @@ fun CategoriesSelection(
                     .weight(1f)
             ) { index ->
                 LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
                     modifier = Modifier.fillMaxSize()
                 )  {
                     val categories = if (index == 0) {

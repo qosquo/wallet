@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Tab
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -38,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -49,7 +53,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.Dependencies
@@ -76,6 +82,8 @@ fun CategoriesList(
         mutableIntStateOf(0)
     }
 
+    val openRestrictionAlertDialog = remember { mutableStateOf(false) }
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         topBar = {
@@ -99,6 +107,17 @@ fun CategoriesList(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
+        when {
+            openRestrictionAlertDialog.value -> {
+                MinimalDialog(
+                    text = "This is a system category, editing is not allowed",
+                    onDismissRequest = {
+                        openRestrictionAlertDialog.value = false
+                    }
+                )
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -135,7 +154,7 @@ fun CategoriesList(
                     .weight(1f)
             ) { index ->
                 LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
                     modifier = Modifier.fillMaxSize()
                 )  {
                     val categories = if (index == 0) {
@@ -167,7 +186,11 @@ fun CategoriesList(
                             },
                             modifier = Modifier
                                 .clickable {
-                                    onNavigate(category.id, selectedTabIndex)
+                                    if (category.id != index.toLong()) {
+                                        onNavigate(category.id, selectedTabIndex)
+                                    } else {
+                                        openRestrictionAlertDialog.value = true
+                                    }
                                 }
                         )
                         HorizontalDivider()
@@ -177,5 +200,30 @@ fun CategoriesList(
 
         }
 
+    }
+}
+
+
+@Composable
+fun MinimalDialog(
+    text: String,
+    onDismissRequest: () -> Unit
+) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Text(
+                text = text,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center),
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }

@@ -80,7 +80,7 @@ fun AccountsList(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         LazyColumn(
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
             modifier = modifier
                 .fillMaxSize()
                 .padding(innerPadding)

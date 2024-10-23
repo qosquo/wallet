@@ -28,6 +28,25 @@ interface CategoriesDao {
             "categories.color_hex AS colorHex FROM categories WHERE id = :categoryId LIMIT 1")
     fun getCategoryFromId(categoryId: Long): Category
 
+    @Query("""
+        SELECT id, category_name AS name, type, goal, category_icon_id AS iconId,
+        color_hex AS colorHex
+        FROM categories WHERE id=0
+    """)
+    fun getSystemExpenseCategory(): Category
+
+    @Query("""
+        SELECT id, category_name AS name, type, goal, category_icon_id AS iconId,
+        color_hex AS colorHex
+        FROM categories WHERE id=1
+    """)
+    fun getSystemIncomeCategory(): Category
+
+    @Query("""
+        UPDATE transactions SET category_id=:categoryType WHERE category_id=:categoryId;
+    """)
+    fun updateTransactionsDeletedCategoryId(categoryType: Int, categoryId: Long)
+
     @Query("DELETE FROM categories WHERE ID = :categoryId")
     fun deleteCategoryDataById(categoryId: Long)
 

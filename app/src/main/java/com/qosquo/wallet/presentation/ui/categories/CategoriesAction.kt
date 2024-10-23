@@ -9,4 +9,6 @@ sealed interface CategoriesAction {
     data class SetGoal(val newGoal: String): CategoriesAction
     data class SetIconId(val newId: Int) : CategoriesAction
     data class SetColorHex(val newHex: String): CategoriesAction
+
+    data class DeleteCategoryById(val categoryId: Long): CategoriesAction
 }

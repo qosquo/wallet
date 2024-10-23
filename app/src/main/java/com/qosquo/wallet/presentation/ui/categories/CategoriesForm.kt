@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -28,6 +29,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -44,6 +47,7 @@ import com.qosquo.wallet.domain.Currencies
 import com.qosquo.wallet.domain.Colors
 import com.qosquo.wallet.domain.Icons
 import com.qosquo.wallet.presentation.ui.accounts.SelectableColor
+import com.qosquo.wallet.presentation.ui.common.components.CommonAlertDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +61,9 @@ fun CategoriesForm(
     val state by Dependencies.categoriesViewModel.state.collectAsStateWithLifecycle()
     onEvent(CategoriesAction.SetCategoryById(categoryId))
     onEvent(CategoriesAction.SetType(type))
+
+    val openDeleteAlertDialog = remember { mutableStateOf(false) }
+    val openExitAlertDialog = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -76,6 +83,19 @@ fun CategoriesForm(
                             contentDescription = "back button"
                         )
                     }
+                },
+                actions = {
+                    categoryId?.let {
+                        IconButton(onClick = {
+                            openDeleteAlertDialog.value = true
+                        }) {
+                            Icon(
+                                imageVector = androidx.compose.material.icons.Icons
+                                    .Default.Delete,
+                                contentDescription = "delete category"
+                            )
+                        }
+                    }
                 }
             )
         },
@@ -94,6 +114,28 @@ fun CategoriesForm(
             .contentWindowInsets
             .exclude(NavigationBarDefaults.windowInsets)
     ) { innerPadding ->
+        when {
+            openDeleteAlertDialog.value -> {
+                val systemCategory = if (state.type == 0) {
+                    Dependencies.categoriesViewModel.systemExpenseCategory
+                } else {
+                    Dependencies.categoriesViewModel.systemIncomeCategory
+                }
+                CommonAlertDialog(
+                    onDismissRequest = {
+                        openDeleteAlertDialog.value = false
+                    },
+                    onConfirmation = {
+                        openDeleteAlertDialog.value = false
+                        onEvent(CategoriesAction.DeleteCategoryById(categoryId!!))
+                        onNavigate()
+                    },
+                    dialogTitle = "Do you really want to delete ${state.name} category?",
+                    dialogText = "All operations with this category will move to ${systemCategory.name}"
+                )
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
