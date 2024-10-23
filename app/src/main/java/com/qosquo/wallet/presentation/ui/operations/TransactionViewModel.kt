@@ -51,7 +51,7 @@ class TransactionViewModel(
                     return
                 }
 
-                if (initialState.accountId < 0) {
+                if (initialState.accountId < 0 || initialState.accountId == accountId) {
                     var accountBalance = dao.getAccountBalance(accountId)
                     val initialAmount = initialState.amount.toFloatOrNull()?.div(100) ?: 0F
                     val categoryType = dao.getCategoryTypeId(categoryId)
@@ -60,7 +60,7 @@ class TransactionViewModel(
                     accountBalance -= signedInitialAmount
                     accountBalance += signedAmount
                     dao.updateAccountBalance(accountBalance, accountId)
-                } else if (initialState.accountId != accountId) {
+                } else {
                     val categoryType = dao.getCategoryTypeId(categoryId)
                     var fromAccountBalance = dao.getAccountBalance(initialState.accountId)
                     var toAccountBalance = dao.getAccountBalance(accountId)
@@ -72,7 +72,7 @@ class TransactionViewModel(
                         dao.updateAccountBalance(fromAccountBalance, initialState.accountId)
                         dao.updateAccountBalance(toAccountBalance, accountId)
                     }
-                }
+               }
 
                 val newTransaction = TransactionsDbEntity(
                     id = id,

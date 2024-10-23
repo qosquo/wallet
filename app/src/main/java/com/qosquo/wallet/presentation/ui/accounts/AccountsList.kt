@@ -50,10 +50,12 @@ import com.qosquo.wallet.utils.amountToStringWithCurrency
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountsList(
+    onAction: (AccountsAction) -> Unit,
     onNavigate: (id: Long?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by Dependencies.accountsViewModel.state.collectAsStateWithLifecycle()
+    onAction(AccountsAction.UpdateAccounts)
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         topBar = {

@@ -128,6 +128,12 @@ class AccountsViewModel(
 
                 _state.value = this.initialState
             }
+
+            AccountsAction.UpdateAccounts -> {
+                _state.update {
+                    it.copy(accounts = dao.getAllAccountsData())
+                }
+            }
         }
     }
 }

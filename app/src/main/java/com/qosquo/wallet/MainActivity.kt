@@ -281,6 +281,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             ) {
                                 AccountsList(
+                                    onAction = Dependencies.accountsViewModel::onAction,
                                     onNavigate = { id ->
                                         navController.navigate(
                                             Screens.Accounts.Form(

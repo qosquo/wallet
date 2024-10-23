@@ -3,6 +3,7 @@ package com.qosquo.wallet.presentation.ui.accounts
 
 sealed interface AccountsAction {
     data object SaveAccount: AccountsAction
+    data object UpdateAccounts: AccountsAction
 
     data class SetAccountById(val accountId: Long?) : AccountsAction
     data class SetName(val newName: String): AccountsAction
