@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -63,21 +64,25 @@ import com.qosquo.wallet.R
 import com.qosquo.wallet.domain.Currencies
 import com.qosquo.wallet.domain.Colors
 import com.qosquo.wallet.domain.Icons
+import com.qosquo.wallet.presentation.ui.categories.CategoriesAction
+import com.qosquo.wallet.presentation.ui.common.components.CommonAlertDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountsForm(
     accountId: Long?,
+    viewModel: AccountsViewModel = Dependencies.accountsViewModel,
     onEvent: (AccountsAction) -> Unit,
     onNavigate: () -> Unit
 ) {
-    val state by Dependencies.accountsViewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     onEvent(AccountsAction.SetAccountById(accountId))
 
     val openCurrenciesDialog = remember {
         mutableStateOf(false)
     }
 
+    val openDeleteAlertDialog = remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -91,8 +96,20 @@ fun AccountsForm(
                             contentDescription = "back button"
                         )
                     }
-                }
-            )
+                },
+                actions = {
+                    accountId?.let {
+                        IconButton(onClick = {
+                            openDeleteAlertDialog.value = true
+                        }) {
+                            Icon(
+                                imageVector = androidx.compose.material.icons.Icons
+                                    .Default.Delete,
+                                contentDescription = "delete account"
+                            )
+                        }
+                    }
+                })
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -120,6 +137,21 @@ fun AccountsForm(
                         openCurrenciesDialog.value = false
                     },
                     defaultValue = state.currency
+                )
+            }
+
+            openDeleteAlertDialog.value ->{
+                CommonAlertDialog(
+                    onDismissRequest = {
+                        openDeleteAlertDialog.value = false
+                    },
+                    onConfirmation = {
+                        openDeleteAlertDialog.value = false
+                        onEvent(AccountsAction.DeleteAccount(accountId!!))
+                        onNavigate()
+                    },
+                    dialogTitle = "Do you really want to delete ${state.name} account?",
+                    dialogText = "All operations with this account will be deleted!"
                 )
             }
         }

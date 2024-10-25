@@ -12,4 +12,6 @@ sealed interface AccountsAction {
     data class SetIconId(val newId: Int) : AccountsAction
     data class SetColorHex(val newHex: String): AccountsAction
     data class SetCurrency(val newCurrency: Int) : AccountsAction
+
+    data class DeleteAccount(val accountId: Long) : AccountsAction
 }

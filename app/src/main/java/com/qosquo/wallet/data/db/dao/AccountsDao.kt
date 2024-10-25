@@ -18,6 +18,11 @@ interface AccountsDao {
             "accounts.color_hex AS colorHex, accounts.count FROM accounts")
     fun getAllAccountsData(): List<Account>
 
+    @Query("""
+        DELETE FROM transactions WHERE account_id=:accountId;
+    """)
+    fun deleteTransactionsWithAccountId(accountId: Long)
+
     @Query("SELECT accounts.id, accounts.balance, accounts.currency, " +
             "accounts.account_name AS name, " +
             "accounts.account_icon_id AS accountIconId, " +

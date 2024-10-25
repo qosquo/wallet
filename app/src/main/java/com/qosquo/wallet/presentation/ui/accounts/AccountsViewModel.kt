@@ -134,6 +134,22 @@ class AccountsViewModel(
                     it.copy(accounts = dao.getAllAccountsData())
                 }
             }
+
+            is AccountsAction.DeleteAccount -> {
+                dao.deleteTransactionsWithAccountId(action.accountId)
+                dao.deleteAccountDataById(action.accountId)
+                _state.update {
+                    it.copy(
+                        accounts = dao.getAllAccountsData(),
+                        name = "",
+                        iconId = 0,
+                        colorHex = "#000000",
+                        initialBalance = "",
+                        currency = Currencies.RUBEL.ordinal,
+                        mustBeCounted = true
+                    )
+                }
+            }
         }
     }
 }
