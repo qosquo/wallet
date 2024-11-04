@@ -109,7 +109,8 @@ fun AccountsForm(
                             )
                         }
                     }
-                })
+                }
+            )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {

@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Dependencies.init(applicationContext)
+        Dependencies.categoriesViewModel.insertSystemCategories(context = applicationContext)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 

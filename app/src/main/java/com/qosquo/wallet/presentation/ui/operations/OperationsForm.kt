@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -55,6 +56,8 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.Dependencies
 import com.qosquo.wallet.R
+import com.qosquo.wallet.presentation.ui.accounts.AccountsAction
+import com.qosquo.wallet.presentation.ui.common.components.CommonAlertDialog
 import com.qosquo.wallet.presentation.ui.operations.OperationsAction
 import com.qosquo.wallet.utils.CurrencyAmountInputVisualTransformation
 import com.qosquo.wallet.utils.PastOrPresentSelectableDates
@@ -88,6 +91,8 @@ fun OperationsForm(
     val calendar = Calendar.getInstance()
     var showDatePicker by remember { mutableStateOf(false) }
 
+    val openDeleteAlertDialog = remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -102,6 +107,19 @@ fun OperationsForm(
                             imageVector = androidx.compose.material.icons.Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = "back button"
                         )
+                    }
+                },
+                actions = {
+                    accountId?.let {
+                        IconButton(onClick = {
+                            openDeleteAlertDialog.value = true
+                        }) {
+                            Icon(
+                                imageVector = androidx.compose.material.icons.Icons
+                                    .Default.Delete,
+                                contentDescription = "delete transaction"
+                            )
+                        }
                     }
                 }
             )
@@ -134,6 +152,21 @@ fun OperationsForm(
                     onDismiss = {
                         showDatePicker = false
                     }
+                )
+            }
+
+            openDeleteAlertDialog.value ->{
+                CommonAlertDialog(
+                    onDismissRequest = {
+                        openDeleteAlertDialog.value = false
+                    },
+                    onConfirmation = {
+                        openDeleteAlertDialog.value = false
+                        onAction(OperationsAction.DeleteTransaction(transactionId!!))
+                        navigate(OperationsNavigateCode.BACK)
+                    },
+                    dialogTitle = "Do you really want to delete this transaction?",
+                    dialogText = "Operation can not be undone"
                 )
             }
         }

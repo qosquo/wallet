@@ -1,6 +1,7 @@
 package com.qosquo.wallet.data.db.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
 import com.qosquo.wallet.domain.Category
@@ -10,7 +11,7 @@ import com.qosquo.wallet.data.db.entity.CategoriesDbEntity
 interface CategoriesDao {
 
     @Upsert(entity = CategoriesDbEntity::class)
-    fun upsertNewCategoryData(category: CategoriesDbEntity)
+    fun upsertNewCategoryData(category: CategoriesDbEntity) : Long
 
     @Query("SELECT categories.id, categories.category_name AS name," +
             "categories.type, categories.goal, categories.category_icon_id AS iconId," +

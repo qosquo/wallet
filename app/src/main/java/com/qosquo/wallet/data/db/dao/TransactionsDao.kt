@@ -75,6 +75,6 @@ interface TransactionsDao {
     fun getTransactionsPerDay(): Map<@MapColumn("date") Long, List<Transaction>>
 
     @Query("DELETE FROM transactions WHERE ID = :transactionId")
-    suspend fun deleteTransactionDataById(transactionId: Long)
+    fun deleteTransactionDataById(transactionId: Long)
 
 }

@@ -97,4 +97,7 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(kotlin("reflect"))
+
+    // android datastore preferences
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }

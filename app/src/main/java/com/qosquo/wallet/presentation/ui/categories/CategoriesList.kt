@@ -39,6 +39,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,17 +52,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.toColorInt
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qosquo.wallet.Dependencies
 import com.qosquo.wallet.R
 import com.qosquo.wallet.presentation.ui.common.components.MinimalDialog
+import com.qosquo.wallet.utils.PreferencesDataStoreHelper
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -126,6 +131,7 @@ fun CategoriesList(
         ) {
             val scope = rememberCoroutineScope()
 
+            val context = LocalContext.current
             LaunchedEffect(pagerState.currentPage) {
                 selectedTabIndex = pagerState.currentPage
                 onTabChange(CategoriesAction.SetType(pagerState.currentPage))
@@ -187,10 +193,37 @@ fun CategoriesList(
                             },
                             modifier = Modifier
                                 .clickable {
-                                    if (category.id != index.toLong()) {
-                                        onNavigate(category.id, selectedTabIndex)
-                                    } else {
-                                        openRestrictionAlertDialog.value = true
+                                    scope.launch {
+                                        when (index) {
+                                            0 -> {
+                                                PreferencesDataStoreHelper.getLongValueFlow(
+                                                    longPreferencesKey("expenseCategoryId"),
+                                                    context
+                                                ).collect {
+                                                    if (it != null) {
+                                                        if (category.id != it) {
+                                                            onNavigate(category.id, selectedTabIndex)
+                                                        } else {
+                                                            openRestrictionAlertDialog.value = true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            1 -> {
+                                                PreferencesDataStoreHelper.getLongValueFlow(
+                                                    longPreferencesKey("incomeCategoryId"),
+                                                    context
+                                                ).collect {
+                                                    if (it != null) {
+                                                        if (category.id != it) {
+                                                            onNavigate(category.id, selectedTabIndex)
+                                                        } else {
+                                                            openRestrictionAlertDialog.value = true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                         )

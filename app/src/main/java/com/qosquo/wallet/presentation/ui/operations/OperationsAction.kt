@@ -10,4 +10,6 @@ sealed interface OperationsAction {
     data class SetDate(val newDate: Long) : OperationsAction
     data class SetNotes(val newNotes: String) : OperationsAction
     data class SetTransactionById(val transactionId: Long?) : OperationsAction
+
+    data class DeleteTransaction(val transactionId: Long) : OperationsAction
 }

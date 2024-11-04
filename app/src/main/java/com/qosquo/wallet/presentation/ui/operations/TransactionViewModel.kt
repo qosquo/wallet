@@ -198,6 +198,32 @@ class TransactionViewModel(
                     it.copy(transactionsPerDay = dao.getTransactionsPerDay())
                 }
             }
+
+            is OperationsAction.DeleteTransaction -> {
+                val transaction = dao.getTransactionFromId(action.transactionId)
+
+                val amount = transaction.amount
+                val accountId = transaction.accountId
+                val categoryId = transaction.categoryId
+
+                var accountBalance = dao.getAccountBalance(accountId)
+                val categoryType = dao.getCategoryTypeId(categoryId)
+                val signedAmount = signedValue(categoryType, amount)
+                accountBalance -= signedAmount
+                dao.updateAccountBalance(accountBalance, accountId)
+                dao.deleteTransactionDataById(action.transactionId)
+                _state.update {
+                    it.copy(
+                        transactionsPerDay = dao.getTransactionsPerDay(),
+                        id = 0,
+                        amount = "",
+                        accountId = -1,
+                        categoryId = -1,
+                        date = -1,
+                        notes = ""
+                    )
+                }
+            }
         }
     }
 }
